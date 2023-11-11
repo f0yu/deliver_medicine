@@ -2,7 +2,17 @@
 #include "oled.h"
 #include "stdlib.h"
 #include "oledfont.h"
+/*
 
+可能原因 ：电源电平不够稳定
+没有上拉电阻
+线路质量不够高
+
+后续可以更改线路  或者使用逻辑分析仪进行修改
+
+
+
+*/
 //#include "delay.h"
 # if !OLED_SOFT_MODE
 I2C_HandleTypeDef hi2c1;

@@ -18,8 +18,9 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "i2c.h"
 #include "gpio.h"
-
+#include "oled.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -84,8 +85,11 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  //MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-
+	OLED_Init();
+	OLED_Display_On();
+	OLED_Clear();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -93,7 +97,11 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+	OLED_ShowString(5,0,"data_view  <",16);
+	OLED_ShowString(5,2,"mode_channel ",16);
+	OLED_ShowString(5,4,"openmv_data ",16);
+	OLED_ShowString(5,6,"Back ",16);
+	  HAL_Delay(1000);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

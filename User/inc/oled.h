@@ -25,7 +25,7 @@
 #include "main.h"
 #include "stdlib.h"
 #include "stm32f1xx_hal.h"
-#define OLED_SOFT_MODE 0
+#define OLED_SOFT_MODE 1
 #define SIZE 8
 #define XLevelL		0x00
 #define XLevelH		0x10

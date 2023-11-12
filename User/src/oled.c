@@ -54,7 +54,7 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef* i2cHandle)
   /* USER CODE END I2C1_MspInit 1 */
   }
 }
-#endif 
+#else
 void OLED_IIC_Start()
 {
 	OLED_SCLK_Set() ;
@@ -107,6 +107,7 @@ void OLED_IIC_Wait_Ack()
 	OLED_SCLK_Set() ;
 	OLED_SCLK_Clr();
 }
+#endif
 /**********************************************
 // IIC Write byte
 **********************************************/
@@ -559,7 +560,7 @@ void OLED_Num5(unsigned char x,unsigned char y,unsigned int number)
         OLED_Num_write(x+1,y,qian);
         OLED_Num_write(x+2,y,bai);
         OLED_Num_write(x+3,y,shi);
-		    OLED_Num_write(x+4,y,ge);
+		OLED_Num_write(x+4,y,ge);
 }
 
 

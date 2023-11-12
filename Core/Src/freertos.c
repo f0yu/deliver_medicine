@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include  <math.h>    //Keil library 
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -71,9 +71,10 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-	OLED_Init();
-	OLED_Display_On();
-	OLED_Clear();
+//	OLED_Init();
+//	OLED_Display_On();
+//	OLED_Clear();
+	Init_HMC5883();
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -98,8 +99,8 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
-  	xTaskCreate(lcd_test, "lcd_test", 128, NULL, osPriorityNormal, NULL);
-
+  	xTaskCreate(lcd_test, "lcd_test", 300, NULL, osPriorityNormal, NULL);
+	
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -131,13 +132,58 @@ void StartDefaultTask(void *argument)
 void lcd_test(void *params)
 {
 	
-	
+	uint8_t BUF[8];
+	int16_t x,y,z;
+	double angle_xy;
+	double angle_xz;
+	double angle_yz;
 	while(1)
 	{
-		OLED_ShowString(5,0,"data_view  <",16);
-		OLED_ShowString(5,2,"mode_channel ",16);
-		OLED_ShowString(5,4,"openmv_data ",16);
-		OLED_ShowString(5,6,"Back ",16);
+		
+		 Multiple_Read_HMC5883(BUF);
+		x=(int16_t)BUF[0] << 8 | BUF[1]; //Combine MSB and LSB of X Data output register  最高有效位
+		z=(int16_t)BUF[2] << 8 | BUF[3]; //Combine MSB and LSB of Z Data output register
+		y=(int16_t)BUF[4] << 8 | BUF[5]; //Combine MSB and LSB of Y Data output register
+		
+		//angle= atan2((double)y,(double)x) * (180 / 3.14159265) + 180; // angle in degrees 
+//		angle*=10;
+		//atan2求出的angle取值范围为[-180,180]
+    angle_xy = atan2((double)y,(double)x)*(180/3.14159265)+180;
+   angle_xz = atan2((double)x,(double)z)*(180/3.14159265)+180;
+   angle_yz = atan2((double)y,(double)z)*(180/3.14159265)+180;
+	printf("angle_xy,%f \r\n",angle_xy);
+//    
+////atan求出的angle取值范围为[-90,90]
+//    angle_xy = atan(y,x)*(180/3.14159265)+90;
+//    angle_xz = atan(x,z)*(180/3.14159265)+90;
+//    angle_yz = atan(y,z)*(180/3.14159265)+90;
+    
+    
+    /* 将芯片焊到板子上时，测量方位时正常方位的反面，因而在原有基础上多加180度旋转，再进行判断 */
+//		wan=temp_data/10000+0x30 ;
+//		temp_data=temp_data%10000;   //取余运算
+//		qian=temp_data/1000+0x30 ;
+//		temp_data=temp_data%1000;    //取余运算
+//		bai=temp_data/100+0x30   ;
+//		temp_data=temp_data%100;     //取余运算
+//		shi=temp_data/10+0x30    ;
+//		temp_data=temp_data%10;      //取余运算
+//		ge=temp_data+0x30; 	
+//		
+//		OLED_ShowString(5,0,"data_view  <",8);
+//		OLED_ShowNumber(5,2,(unsigned int)angle,8,16);
+//		 OLED_Num2(0,0,x) ;
+//		 OLED_Num2(0,2,(int)angle_xy) ;
+//		 OLED_Num2(0,4,angle_xz) ;
+//		 OLED_Num2(0,6,angle_yz) ;
+//		OLED_ShowNumber(5,4,BUF[1],3,16);
+//		OLED_ShowNumber(5,6,BUF[2],3,16);
+		osDelay(10);
+		//OLED_Clear();
+//		OLED_ShowString(5,0,"data_view  <",16);
+//		OLED_ShowString(5,2,"mode_channel ",16);
+//		OLED_ShowString(5,4,"openmv_data ",16);
+//		OLED_ShowString(5,6,"Back ",16);
 	}
 	
 }

@@ -45,7 +45,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-
+void lcd_test(void *params);
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -71,7 +71,9 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-
+	OLED_Init();
+	OLED_Display_On();
+	OLED_Clear();
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -96,6 +98,8 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+  	xTaskCreate(lcd_test, "lcd_test", 128, NULL, osPriorityNormal, NULL);
+
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -124,6 +128,18 @@ void StartDefaultTask(void *argument)
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-
+void lcd_test(void *params)
+{
+	
+	
+	while(1)
+	{
+		OLED_ShowString(5,0,"data_view  <",16);
+		OLED_ShowString(5,2,"mode_channel ",16);
+		OLED_ShowString(5,4,"openmv_data ",16);
+		OLED_ShowString(5,6,"Back ",16);
+	}
+	
+}
 /* USER CODE END Application */
 

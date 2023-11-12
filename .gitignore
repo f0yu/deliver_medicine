@@ -30,3 +30,5 @@ Examples/
 !*.axf
 !*.bin
 !*.hex
+MDK-ARM/medicine_car/medicine_car.hex
+MDK-ARM/medicine_car.uvoptx

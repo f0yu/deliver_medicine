@@ -154,8 +154,11 @@
         </SetRegEntry>
       </TargetDriverDllRegistry>
 <<<<<<< HEAD
+<<<<<<< HEAD
       <Breakpoint />
 =======
+=======
+>>>>>>> parent of 5c26ff3 (some comments)
       <Breakpoint>
         <Bp>
           <Number>0</Number>
@@ -174,6 +177,9 @@
           <Expression></Expression>
         </Bp>
       </Breakpoint>
+<<<<<<< HEAD
+>>>>>>> parent of 5c26ff3 (some comments)
+=======
 >>>>>>> parent of 5c26ff3 (some comments)
       <Tracepoint>
         <THDelay>0</THDelay>

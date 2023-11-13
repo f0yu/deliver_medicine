@@ -1,5 +1,5 @@
 #include "hmc5883.h"
-
+#include <math.h>
 //软件iic
 
 /**
@@ -179,6 +179,16 @@ void Init_HMC5883()
 	//gpio已经在mx中使能
 	Single_Write_HMC5883(0x00,(3<<5)|(1<<4)|(0<<0)); 
 	Single_Write_HMC5883(0x01,(1<<5)); 
-     Single_Write_HMC5883(0x02,0x00); 
+	Single_Write_HMC5883(0x02,0x00); 
 }
-
+double HMC5883_anglexy(unsigned char *BUF)
+{
+	int16_t x,y;
+	double angle_xy;
+	Multiple_Read_HMC5883(BUF);
+	x=BUF[0] << 8 | BUF[1]; //Combine MSB and LSB of X Data output register  最高有效位
+	
+	y=BUF[4] << 8 | BUF[5]; //Combine MSB and LSB of Y Data output register
+	angle_xy = atan2((double)y,(double)x)*(180/3.14159265)+180;
+	return angle_xy;
+}

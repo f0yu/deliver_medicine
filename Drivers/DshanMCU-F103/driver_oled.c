@@ -139,19 +139,11 @@ void OLED_IIC_Start()
 **********************************************/
 void OLED_IIC_Stop()
 {
-	
 	OLED_SCLK_Set();
 	OLED_SDIN_Clr();
 	OLED_SCLK_Set();
-//	OLED_SCLK_Clr();
-	
-	//OLED_SDIN_Clr();
-	
 	OLED_SDIN_Set();
 	OLED_SCLK_Set();
-	
-	
-	
 }
 
 void OLED_IIC_Wait_Ack()
@@ -231,7 +223,12 @@ void OLED_Write_IIC_Byte(unsigned char IIC_Byte)
  */
  int OLED_WriteNBytes(uint8_t *buf, uint16_t length)
 {	
-	
+//	int i = 0;
+//	while(length--)
+//	{
+//		OLED_WriteData(buf[i]);
+//		i++;
+//	}
 	OLED_IIC_Start();
 	OLED_Write_IIC_Byte(0x78);			//D/C#=0; R/W#=0
 	OLED_IIC_Wait_Ack();	
@@ -613,6 +610,7 @@ void OLED_Init(void)
 	HAL_GPIO_WritePin(OLED_SDA_GPIO_PORT,OLED_SDA_GPIO_PIN,GPIO_PIN_SET);	
 	
 	#endif
+	HAL_Delay(100);
     OLED_SetMemAddrMode(PAGE_ADDR_MODE);    // 0. 设置地址模式
     OLED_SetMuxRatio(0x3F);                 // 1. 设置多路复用率
     OLED_SetDispOffset(0x00);               // 2. 设置显示的偏移值

@@ -31,7 +31,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "oled.h"
+#include "driver_oled.h"
 #include "hmc5883.h"
 #include "stdio.h"
 

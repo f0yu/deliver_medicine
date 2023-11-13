@@ -34,6 +34,8 @@
 #define	Brightness	0xFF 
 #define X_WIDTH 	128
 #define Y_WIDTH 	64	    						  
+
+#if OLED_SOFT_MODE
 //-----------------OLED IIC端口定义----------------  					   
 #define OLED_SCL_GPIO_PORT                  GPIOB
 #define OLED_SCL_GPIO_PIN                   GPIO_PIN_8
@@ -52,7 +54,7 @@
  		     
 #define OLED_CMD  0	//写命令
 #define OLED_DATA 1	//写数据
-
+#endif
 
 //OLED控制用函数
 void OLED_WR_Byte(unsigned dat,unsigned cmd);  

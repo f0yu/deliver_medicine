@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xB</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;../User/inc;../User/src;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;../User/inc;../User/src;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3;..\Drivers\DshanMCU-F103</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -895,11 +895,6 @@
               <FileName>hmc5883.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\src\hmc5883.c</FilePath>
-            </File>
-            <File>
-              <FileName>oled.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\src\oled.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1534,6 +1529,21 @@
                   </Cads>
                 </FileArmAds>
               </FileOption>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Drivers/DshanMCU-103</GroupName>
+          <Files>
+            <File>
+              <FileName>driver_oled.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\DshanMCU-F103\driver_oled.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_lcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\DshanMCU-F103\driver_lcd.c</FilePath>
             </File>
           </Files>
         </Group>

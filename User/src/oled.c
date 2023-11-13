@@ -107,7 +107,7 @@ void OLED_IIC_Wait_Ack()
 	OLED_SCLK_Set() ;
 	OLED_SCLK_Clr();
 }
-#endif
+
 /**********************************************
 // IIC Write byte
 **********************************************/
@@ -131,6 +131,7 @@ void OLED_Write_IIC_Byte(unsigned char IIC_Byte)
 		OLED_SCLK_Clr();
 	}
 }
+#endif
 /**********************************************
 // IIC Write Command
 **********************************************/

@@ -141,8 +141,9 @@ void lcd_test(void *params)
 	while(1)
 	{
 //	Multiple_Read_HMC5883(BUF);
-	OLED_PrintSignedVal(0,0,(short)HMC5883_anglexy(BUF));
+//	OLED_PrintSignedVal(0,0,(short)HMC5883_anglexy(BUF));
 	OLED_PrintSignedVal(0,2,(short)(BUF[0] << 8 | BUF[1]));
+	printf("5883data:%f\r\n",HMC5883_anglexy(BUF));
 //		OLED_Clear();
 		osDelay(10);
 

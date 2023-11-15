@@ -2,17 +2,7 @@
 #include "oled.h"
 #include "stdlib.h"
 #include "oledfont.h"
-/*
 
-可能原因 ：电源电平不够稳定
-没有上拉电阻
-线路质量不够高
-
-后续可以更改线路  或者使用逻辑分析仪进行修改
-
-
-
-*/
 //#include "delay.h"
 # if !OLED_SOFT_MODE
 I2C_HandleTypeDef hi2c1;
@@ -64,7 +54,7 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef* i2cHandle)
   /* USER CODE END I2C1_MspInit 1 */
   }
 }
-#endif 
+#else
 void OLED_IIC_Start()
 {
 	OLED_SCLK_Set() ;
@@ -117,6 +107,7 @@ void OLED_IIC_Wait_Ack()
 	OLED_SCLK_Set() ;
 	OLED_SCLK_Clr();
 }
+
 /**********************************************
 // IIC Write byte
 **********************************************/
@@ -140,6 +131,7 @@ void OLED_Write_IIC_Byte(unsigned char IIC_Byte)
 		OLED_SCLK_Clr();
 	}
 }
+#endif
 /**********************************************
 // IIC Write Command
 **********************************************/
@@ -569,7 +561,7 @@ void OLED_Num5(unsigned char x,unsigned char y,unsigned int number)
         OLED_Num_write(x+1,y,qian);
         OLED_Num_write(x+2,y,bai);
         OLED_Num_write(x+3,y,shi);
-		    OLED_Num_write(x+4,y,ge);
+		OLED_Num_write(x+4,y,ge);
 }
 
 

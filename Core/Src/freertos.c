@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include  <math.h>    //Keil library 
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -46,6 +46,9 @@
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
 void lcd_test(void *params);
+extern TIM_HandleTypeDef htim1;
+extern TIM_HandleTypeDef htim2;
+extern TIM_HandleTypeDef htim4;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -72,8 +75,12 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
 	OLED_Init();
-	OLED_Display_On();
+	
 	OLED_Clear();
+//	OLED_Display_On();
+//	OLED_Clear();
+	Init_HMC5883();
+
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -98,8 +105,8 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
-  	xTaskCreate(lcd_test, "lcd_test", 128, NULL, osPriorityNormal, NULL);
-
+  	xTaskCreate(lcd_test, "lcd_test", 300, NULL, osPriorityNormal, NULL);
+	
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -131,13 +138,32 @@ void StartDefaultTask(void *argument)
 void lcd_test(void *params)
 {
 	
+//	uint8_t BUF[6];
+//	double angle_xz;
+//	double angle_yz;
+	HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_4);
+	HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_1);   // ¿ªÆô±àÂëÆ÷A
+	HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_2);   // ¿ªÆô±àÂëÆ÷B	
 	
+	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_1);   // ¿ªÆô±àÂëÆ÷A
+	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_2);   // ¿ªÆô±àÂëÆ÷B	
+	TIM1->CCR1 = 2500;
+	TIM1->CCR4 = 2500;
 	while(1)
 	{
-		OLED_ShowString(5,0,"data_view  <",16);
-		OLED_ShowString(5,2,"mode_channel ",16);
-		OLED_ShowString(5,4,"openmv_data ",16);
-		OLED_ShowString(5,6,"Back ",16);
+//	Multiple_Read_HMC5883(BUF);
+//	OLED_PrintSignedVal(0,0,(short)HMC5883_anglexy(BUF));
+//	OLED_PrintSignedVal(0,2,(short)(BUF[0] << 8 | BUF[1]));
+//	printf("5883data:%f\r\n",HMC5883_anglexy(BUF));
+	printf("counter :%d\r\n",__HAL_TIM_GetCounter(&htim4));
+    __HAL_TIM_SetCounter(&htim4, 0);
+//		printf("hello,world");
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13|GPIO_PIN_15, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14|GPIO_PIN_12, GPIO_PIN_RESET);
+//		OLED_Clear();
+		osDelay(10);
+
 	}
 	
 }

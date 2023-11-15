@@ -28,3 +28,6 @@ Examples/
 !*.c
 !*.ioc
 
+
+MDK-ARM/medicine_car.uvoptx
+

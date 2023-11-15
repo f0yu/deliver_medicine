@@ -22,7 +22,8 @@
 #include "task.h"
 #include "main.h"
 #include "cmsis_os.h"
-
+#include "timers.h"
+#include "queue.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include  <math.h>    //Keil library 
@@ -45,10 +46,18 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
+void pid_control(void *params);
 void lcd_test(void *params);
+void motor_time_isq(void *params);
+
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim4;
+
+
+
+TimerHandle_t g_motor_timer;
+QueueHandle_t g_speed_data_quene;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -75,10 +84,7 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
 	OLED_Init();
-	
 	OLED_Clear();
-//	OLED_Display_On();
-//	OLED_Clear();
 	Init_HMC5883();
 
   /* USER CODE END Init */
@@ -93,10 +99,14 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
+ g_motor_timer = xTimerCreate("motor_timer",10,pdTRUE,NULL,motor_time_isq);
+	
   /* USER CODE END RTOS_TIMERS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
+  g_speed_data_quene = xQueueCreate(1,sizeof(Speed_Data_Struct));
+  
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
@@ -105,8 +115,10 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
-  	xTaskCreate(lcd_test, "lcd_test", 300, NULL, osPriorityNormal, NULL);
+  	xTaskCreate(lcd_test, "lcd_test", 128, NULL, osPriorityNormal, NULL);
+	xTaskCreate(pid_control, "pid_control", 128, NULL, osPriorityNormal+1, NULL);
 	
+	xTimerStart(g_motor_timer,0);
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -135,33 +147,51 @@ void StartDefaultTask(void *argument)
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
+void motor_time_isq(void *params)
+{
+	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+	Speed_Data_Struct car_speed;
+	car_speed.left_speed =   Get_Speed(&htim2);
+	car_speed.right_speed =   Get_Speed(&htim4);
+	car_speed.left_angel =   Get_Angle(&htim2);
+	car_speed.right_angel =   Get_Angle(&htim4);
+	xQueueOverwriteFromISR(g_speed_data_quene,&car_speed,&xHigherPriorityTaskWoken);
+//	printf("car_speed: %f\r\n",car_speed.left_speed);
+}
+void pid_control(void *params)
+{
+	Speed_Data_Struct car_speed ={0,0,0,0};
+	
+	while(1)
+	{
+		xQueueReceive(g_speed_data_quene,&car_speed,portMAX_DELAY);
+		printf("car_speed: %f\r\n",car_speed.right_speed);
+	}
+	
+}
 void lcd_test(void *params)
 {
-	
+		TIM1->CCR1 = 2500;
+		TIM1->CCR4 = 2500;
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13|GPIO_PIN_15, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14|GPIO_PIN_12, GPIO_PIN_RESET);
 //	uint8_t BUF[6];
 //	double angle_xz;
 //	double angle_yz;
-	HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_1);
-	HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_4);
-	HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_1);   // ¿ªÆô±àÂëÆ÷A
-	HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_2);   // ¿ªÆô±àÂëÆ÷B	
-	
-	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_1);   // ¿ªÆô±àÂëÆ÷A
-	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_2);   // ¿ªÆô±àÂëÆ÷B	
-	TIM1->CCR1 = 2500;
-	TIM1->CCR4 = 2500;
+
 	while(1)
 	{
 //	Multiple_Read_HMC5883(BUF);
 //	OLED_PrintSignedVal(0,0,(short)HMC5883_anglexy(BUF));
 //	OLED_PrintSignedVal(0,2,(short)(BUF[0] << 8 | BUF[1]));
 //	printf("5883data:%f\r\n",HMC5883_anglexy(BUF));
-	printf("counter :%d\r\n",__HAL_TIM_GetCounter(&htim4));
-    __HAL_TIM_SetCounter(&htim4, 0);
-//		printf("hello,world");
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13|GPIO_PIN_15, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14|GPIO_PIN_12, GPIO_PIN_RESET);
+//	printf("counter :%d\r\n",__HAL_TIM_GetCounter(&htim4));
+//    __HAL_TIM_SetCounter(&htim4, 0);
+//		
+//	printf("elloworld\r\n");
 //		OLED_Clear();
+		
+		
 		osDelay(10);
 
 	}

@@ -896,6 +896,21 @@
               <FileType>1</FileType>
               <FilePath>..\User\src\hmc5883.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_motor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\src\bsp_motor.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_encorder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\src\bsp_encorder.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_pid.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\src\bsp_pid.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1544,6 +1559,11 @@
               <FileName>driver_lcd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Drivers\DshanMCU-F103\driver_lcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\DshanMCU-F103\driver_timer.c</FilePath>
             </File>
           </Files>
         </Group>

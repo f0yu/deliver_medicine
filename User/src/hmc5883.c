@@ -11,9 +11,9 @@
  */
 void I2C_Delay()
 {
-	int z = 0xff;
-	while (z--)
-		;
+//	int z = 0xff;
+//	while (z--)
+//		;
 }
 
 /**

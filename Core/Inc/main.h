@@ -34,7 +34,8 @@ extern "C" {
 #include "driver_oled.h"
 #include "hmc5883.h"
 #include "stdio.h"
-
+#include "bsp_encoder.h"
+#include "bsp_motor.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

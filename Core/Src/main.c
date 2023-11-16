@@ -100,9 +100,9 @@ int main(void)
 //	OLED_Init();
 //	OLED_Display_On();
 //	OLED_Clear();
-
+Encoder_Init();
 	motor_pwm_init();
-	Encoder_Init();
+	
   /* USER CODE END 2 */
 
   /* Init scheduler */

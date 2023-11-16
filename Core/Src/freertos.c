@@ -83,9 +83,9 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-	OLED_Init();
-	OLED_Clear();
-	Init_HMC5883();
+//	OLED_Init();
+//	OLED_Clear();
+//	Init_HMC5883();
 
   /* USER CODE END Init */
 
@@ -115,8 +115,8 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
-  	xTaskCreate(lcd_test, "lcd_test", 128, NULL, osPriorityNormal, NULL);
-	xTaskCreate(pid_control, "pid_control", 128, NULL, osPriorityNormal+1, NULL);
+//  	xTaskCreate(lcd_test, "lcd_test", 100, NULL, osPriorityNormal, NULL);
+	xTaskCreate(pid_control, "pid_control", 100, NULL, osPriorityNormal+1, NULL);
 	
 	xTimerStart(g_motor_timer,0);
   /* USER CODE END RTOS_THREADS */
@@ -156,23 +156,26 @@ void motor_time_isq(void *params)
 	car_speed.left_angel =   Get_Angle(&htim2);
 	car_speed.right_angel =   Get_Angle(&htim4);
 	xQueueOverwriteFromISR(g_speed_data_quene,&car_speed,&xHigherPriorityTaskWoken);
-//	printf("car_speed: %f\r\n",car_speed.left_speed);
+	printf("car_speed: %f,%f\r\n",car_speed.right_speed,car_speed.left_speed);
 }
 void pid_control(void *params)
 {
 	Speed_Data_Struct car_speed ={0,0,0,0};
-	
+	TIM1->CCR1 = 2500;
+	TIM1->CCR4 = 2500;
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13|GPIO_PIN_15, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14|GPIO_PIN_12, GPIO_PIN_RESET);
 	while(1)
 	{
 		xQueueReceive(g_speed_data_quene,&car_speed,portMAX_DELAY);
-		printf("car_speed: %f\r\n",car_speed.right_speed);
+//		printf("car_speed: %f\r\n",car_speed.left_speed);
 	}
 	
 }
 void lcd_test(void *params)
 {
-		TIM1->CCR1 = 2500;
-		TIM1->CCR4 = 2500;
+		TIM1->CCR1 = 1250;
+		TIM1->CCR4 = 1250;
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13|GPIO_PIN_15, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14|GPIO_PIN_12, GPIO_PIN_RESET);
 //	uint8_t BUF[6];

@@ -48,6 +48,7 @@
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
 void pid_control(void *params);
+void fire_pid(void *params);
 void lcd_test(void *params);
 void motor_time_isq(void *params);
 
@@ -64,7 +65,7 @@ QueueHandle_t g_speed_data_quene;
 osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
-  .stack_size = 128 * 4,
+  .stack_size = 60 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 
@@ -141,10 +142,11 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
- 	xTaskCreate(lcd_test, "lcd_test", 100, NULL, osPriorityNormal, NULL);
-	xTaskCreate(pid_control, "pid_control", 100, NULL, osPriorityNormal+1, NULL);
+// 	xTaskCreate(lcd_test, "lcd_test", 100, NULL, osPriorityNormal, NULL);
+//	xTaskCreate(pid_control, "pid_control", 100, NULL, osPriorityNormal+1, NULL);
+	xTaskCreate(fire_pid, "fire_pid", 200, NULL, osPriorityNormal, NULL);
 	
-	xTimerStart(g_motor_timer,0);
+//	xTimerStart(g_motor_timer,0);
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -183,7 +185,7 @@ void motor_time_isq(void *params)
 	car_speed.left_angel =   Get_Angle(&htim2);
 	car_speed.right_angel =   Get_Angle(&htim4);
 	xQueueOverwriteFromISR(g_speed_data_quene,&car_speed,&xHigherPriorityTaskWoken);
-printf("car_speed: %f,%f\r\n",car_speed.right_speed,car_speed.left_speed);
+//	printf("car_speed: %f,%f\r\n",car_speed.right_speed,car_speed.left_speed);
 }
 void pid_control(void *params)
 {
@@ -199,8 +201,27 @@ void pid_control(void *params)
 		//对pid进行控制
 //		printf("car_speed: %f\r\n",car_speed.left_speed);
 	}
+}
+	uint32_t a = 100;
+void fire_pid(void *params)
+{
+//	protocol_init();
+
+
+	while(1)
+	{
+//		receiving_process();
+		//set_computer_value(SEND_STOP_CMD,CURVES_CH1,&a,1);
+//		a++;
+//			set_computer_value(SEND_STOP_CMD, CURVES_CH1, NULL, 0);    // 同步上位机的启动按钮状态
+			set_computer_value(SEND_FACT_CMD, CURVES_CH1, &a, 1);     // 给通道 1 发送目标值
+		
+		osDelay(100);
+	}
 	
 }
+
+
 void lcd_test(void *params)
 {
 		TIM1->CCR1 = 1250;

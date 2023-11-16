@@ -36,6 +36,7 @@ extern "C" {
 #include "stdio.h"
 #include "bsp_encoder.h"
 #include "bsp_motor.h"
+#include "protocol.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

@@ -294,7 +294,7 @@ int8_t receiving_process(void)
   uint8_t frame_data[128];         // 要能放下最长的帧
   uint16_t frame_len = 0;          // 帧长度
   uint8_t cmd_type = CMD_NONE;     // 命令类型
-  packet_head_t packet;
+//  packet_head_t packet;
   
   while(1)
   {
@@ -399,7 +399,7 @@ void set_computer_value(uint8_t cmd, uint8_t ch, void *data, uint8_t num)
   num *= 4;           // 一个参数 4 个字节
   
   static packet_head_t set_packet;
-  
+   
   set_packet.head = FRAME_HEADER;     // 包头 0x59485A53
   set_packet.len  = 0x0B + num;      // 包长
   set_packet.ch   = ch;              // 设置通道

@@ -22,11 +22,12 @@
 #include "task.h"
 #include "main.h"
 #include "cmsis_os.h"
-#include "timers.h"
-#include "queue.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include  <math.h>    //Keil library 
+#include "timers.h"
+#include "queue.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -53,7 +54,7 @@ void motor_time_isq(void *params);
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim4;
-
+//static  char pcWriteBuffer[200];
 
 
 TimerHandle_t g_motor_timer;
@@ -75,6 +76,31 @@ const osThreadAttr_t defaultTask_attributes = {
 void StartDefaultTask(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
+
+/* Hook prototypes */
+void vApplicationIdleHook(void);
+
+/* USER CODE BEGIN 2 */
+void vApplicationIdleHook( void )
+{
+   /* vApplicationIdleHook() will only be called if configUSE_IDLE_HOOK is set
+   to 1 in FreeRTOSConfig.h. It will be called on each iteration of the idle
+   task. It is essential that code added to this hook function never attempts
+   to block in any way (for example, call xQueueReceive() with a block time
+   specified, or call vTaskDelay()). If the application makes use of the
+   vTaskDelete() API function (as this demo application does) then it is also
+   important that vApplicationIdleHook() is permitted to return to its calling
+   function, because it is the responsibility of the idle task to clean up
+   memory allocated by the kernel to any task that has since been deleted. */
+//	int i;
+//	vTaskList((char *)pcWriteBuffer);
+//	for (i = 0; i < 16; i++)
+//		printf("-");
+//	printf("\n\r");
+//	printf("%s\n\r", pcWriteBuffer);
+	
+}
+/* USER CODE END 2 */
 
 /**
   * @brief  FreeRTOS initialization
@@ -99,7 +125,7 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
- g_motor_timer = xTimerCreate("motor_timer",10,pdTRUE,NULL,motor_time_isq);
+ g_motor_timer = xTimerCreate("motor_timer",100,pdTRUE,NULL,motor_time_isq);
 	
   /* USER CODE END RTOS_TIMERS */
 
@@ -138,6 +164,7 @@ void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
+	vTaskDelete(NULL);
   for(;;)
   {
     osDelay(1);
@@ -156,7 +183,7 @@ void motor_time_isq(void *params)
 	car_speed.left_angel =   Get_Angle(&htim2);
 	car_speed.right_angel =   Get_Angle(&htim4);
 	xQueueOverwriteFromISR(g_speed_data_quene,&car_speed,&xHigherPriorityTaskWoken);
-	printf("car_speed: %f,%f\r\n",car_speed.right_speed,car_speed.left_speed);
+printf("car_speed: %f,%f\r\n",car_speed.right_speed,car_speed.left_speed);
 }
 void pid_control(void *params)
 {

@@ -89,7 +89,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-//  MX_I2C1_Init();
+  MX_I2C1_Init();
 //  MX_TIM1_Init();
 //  MX_TIM2_Init();
 //  MX_TIM4_Init();
@@ -100,7 +100,7 @@ int main(void)
 //	OLED_Init();
 //	OLED_Display_On();
 //	OLED_Clear();
-Encoder_Init();
+	Encoder_Init();
 	motor_pwm_init();
 	
   /* USER CODE END 2 */

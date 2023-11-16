@@ -372,8 +372,8 @@ int8_t receiving_process(void)
       
       case SET_PERIOD_CMD:
       {
-        uint32_t temp = COMPOUND_32BIT(&frame_data[13]);     // 周期数
-        packet.ch = frame_data[CHX_INDEX_VAL];
+//        uint32_t temp = COMPOUND_32BIT(&frame_data[13]);     // 周期数
+//        packet.ch = frame_data[CHX_INDEX_VAL];
         
 //        SET_BASIC_TIM_PERIOD(temp);                             // 设置定时器周期1~1000ms
       }
@@ -408,9 +408,9 @@ void set_computer_value(uint8_t cmd, uint8_t ch, void *data, uint8_t num)
   sum = check_sum(0, (uint8_t *)&set_packet, sizeof(set_packet));       // 计算包头校验和
   sum = check_sum(sum, (uint8_t *)data, num);                           // 计算参数校验和
   
-  HAL_UART_Transmit(&, (uint8_t *)&set_packet, sizeof(set_packet), 0xFFFFF);    // 发送数据头
-  HAL_UART_Transmit(&UartHandle, (uint8_t *)data, num, 0xFFFFF);                          // 发送参数
-  HAL_UART_Transmit(&UartHandle, (uint8_t *)&sum, sizeof(sum), 0xFFFFF);                  // 发送校验和
+  HAL_UART_Transmit(&huart2, (uint8_t *)&set_packet, sizeof(set_packet), 0xFFFFF);    // 发送数据头
+  HAL_UART_Transmit(&huart2, (uint8_t *)data, num, 0xFFFFF);                          // 发送参数
+  HAL_UART_Transmit(&huart2, (uint8_t *)&sum, sizeof(sum), 0xFFFFF);                  // 发送校验和
 }
 
 /**********************************************************************************************/

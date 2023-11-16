@@ -115,7 +115,7 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
-//  	xTaskCreate(lcd_test, "lcd_test", 100, NULL, osPriorityNormal, NULL);
+ 	xTaskCreate(lcd_test, "lcd_test", 100, NULL, osPriorityNormal, NULL);
 	xTaskCreate(pid_control, "pid_control", 100, NULL, osPriorityNormal+1, NULL);
 	
 	xTimerStart(g_motor_timer,0);
@@ -167,7 +167,9 @@ void pid_control(void *params)
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14|GPIO_PIN_12, GPIO_PIN_RESET);
 	while(1)
 	{
+		
 		xQueueReceive(g_speed_data_quene,&car_speed,portMAX_DELAY);
+		//对pid进行控制
 //		printf("car_speed: %f\r\n",car_speed.left_speed);
 	}
 	

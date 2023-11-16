@@ -1548,6 +1548,16 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>Middlewares/Transplant</GroupName>
+          <Files>
+            <File>
+              <FileName>protocol.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Middlewares\protocol\protocol.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>Drivers/DshanMCU-103</GroupName>
           <Files>
             <File>

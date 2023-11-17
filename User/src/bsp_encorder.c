@@ -23,9 +23,8 @@ float Get_Speed(TIM_HandleTypeDef *Encoder_TIM_Handle)
     float Speed = 0;
     zj = __HAL_TIM_GetCounter(Encoder_TIM_Handle);
     __HAL_TIM_SetCounter(Encoder_TIM_Handle, 0);
-	Speed = zj;
-//	printf("car_speed: %d,\r\n",zj);
-    Speed = (float)zj / (4 * 448 * 30) * 100 * 60;
+	printf("car_speed: %d,\r\n",zj);
+    Speed = (float)(zj * 100 * 60) / (4 * 448 * 30);
     return Speed;
 }
 
@@ -34,7 +33,7 @@ float Get_Angle(TIM_HandleTypeDef *Encoder_TIM_Handle)
     int16_t zj;
     float angle = 0;
     zj = __HAL_TIM_GetCounter(Encoder_TIM_Handle);
-    angle = (float)zj / (4 * 448 * 30) * 360;
+    angle = (float)zj* 360 / (4 * 448 * 30) ;
     return angle;
 }
 

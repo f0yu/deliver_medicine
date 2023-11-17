@@ -315,7 +315,8 @@ int8_t receiving_process(void)
 //        temp_p.i = COMPOUND_32BIT(&frame_data[13]);
 //        temp_i.i = COMPOUND_32BIT(&frame_data[17]);
 //        temp_d.i = COMPOUND_32BIT(&frame_data[21]);
-//        
+		
+		
 //        if (packet.ch == CURVES_CH1)
 //        {
 //          set_p_i_d(&pid_location, temp_p.f, temp_i.f, temp_d.f);    // 设置 P I D
@@ -355,12 +356,16 @@ int8_t receiving_process(void)
       case START_CMD:
       {
 //        set_motor_enable();              // 启动电机
+			right_motor_go();
+			left_motor_go();
       }
       break;
       
       case STOP_CMD:
       {
 //        set_motor_disable();              // 停止电机
+		right_motor_stop();
+		left_motor_stop();
       }
       break;
       

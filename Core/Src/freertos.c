@@ -110,9 +110,9 @@ void vApplicationIdleHook( void )
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-//	OLED_Init();
-//	OLED_Clear();
-//	Init_HMC5883();
+	OLED_Init();
+	OLED_Clear();
+	Init_HMC5883();
 
   /* USER CODE END Init */
 
@@ -126,7 +126,7 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
- g_motor_timer = xTimerCreate("motor_timer",100,pdTRUE,NULL,motor_time_isq);
+ g_motor_timer = xTimerCreate("motor_timer",10,pdTRUE,NULL,motor_time_isq);
 	
   /* USER CODE END RTOS_TIMERS */
 
@@ -144,9 +144,12 @@ void MX_FREERTOS_Init(void) {
   /* add threads, ... */
 // 	xTaskCreate(lcd_test, "lcd_test", 100, NULL, osPriorityNormal, NULL);
 //	xTaskCreate(pid_control, "pid_control", 100, NULL, osPriorityNormal+1, NULL);
-	xTaskCreate(fire_pid, "fire_pid", 200, NULL, osPriorityNormal, NULL);
-	
-//	xTimerStart(g_motor_timer,0);
+//	xTaskCreate(fire_pid, "fire_pid", 100, NULL, osPriorityNormal, NULL);
+	TIM1->CCR1 = 2500;
+	TIM1->CCR4 = 2500;
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13|GPIO_PIN_15, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14|GPIO_PIN_12, GPIO_PIN_RESET);
+	xTimerStart(g_motor_timer,0);
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -180,16 +183,17 @@ void motor_time_isq(void *params)
 {
 	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 	Speed_Data_Struct car_speed;
-	car_speed.left_speed =   Get_Speed(&htim2);
+//	car_speed.left_speed =   Get_Speed(&htim2);
 	car_speed.right_speed =   Get_Speed(&htim4);
-	car_speed.left_angel =   Get_Angle(&htim2);
-	car_speed.right_angel =   Get_Angle(&htim4);
+//	car_speed.left_angel =   Get_Angle(&htim2);
+//	car_speed.right_angel =   Get_Angle(&htim4);
 	xQueueOverwriteFromISR(g_speed_data_quene,&car_speed,&xHigherPriorityTaskWoken);
 //	printf("car_speed: %f,%f\r\n",car_speed.right_speed,car_speed.left_speed);
 }
 void pid_control(void *params)
 {
 	Speed_Data_Struct car_speed ={0,0,0,0};
+	int16_t pid_data_right = 0;
 	TIM1->CCR1 = 2500;
 	TIM1->CCR4 = 2500;
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13|GPIO_PIN_15, GPIO_PIN_SET);
@@ -198,25 +202,33 @@ void pid_control(void *params)
 	{
 		
 		xQueueReceive(g_speed_data_quene,&car_speed,portMAX_DELAY);
-		//对pid进行控制
-//		printf("car_speed: %f\r\n",car_speed.left_speed);
+//对pid进行控制
+		g_motor_left_pid.actual_val = car_speed.right_speed;
+		pid_data_right = -PID_Increment(&g_motor_left_pid);
+		if (pid_data_right > 7000)
+            pid_data_right = 7000;
+        else if (pid_data_right < -7000)
+            pid_data_right = -7000;
+//		motor((int16_t)pid_data_right,&htim1,TIM_CHANNEL_4);
+//		printf("car_speed: %d,%d\r\n",pid_data_right,(int16_t)car_speed.right_speed);
+	
 	}
 }
 	uint32_t a = 100;
 void fire_pid(void *params)
 {
-//	protocol_init();
+	protocol_init();
 
 
 	while(1)
 	{
-//		receiving_process();
+		receiving_process();
 		//set_computer_value(SEND_STOP_CMD,CURVES_CH1,&a,1);
 //		a++;
 //			set_computer_value(SEND_STOP_CMD, CURVES_CH1, NULL, 0);    // 同步上位机的启动按钮状态
-			set_computer_value(SEND_FACT_CMD, CURVES_CH1, &a, 1);     // 给通道 1 发送目标值
+			//set_computer_value(SEND_FACT_CMD, CURVES_CH1, &a, 1);     // 给通道 1 发送目标值
 		
-		osDelay(100);
+		osDelay(10);
 	}
 	
 }
@@ -224,24 +236,25 @@ void fire_pid(void *params)
 
 void lcd_test(void *params)
 {
-		TIM1->CCR1 = 1250;
-		TIM1->CCR4 = 1250;
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13|GPIO_PIN_15, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14|GPIO_PIN_12, GPIO_PIN_RESET);
-//	uint8_t BUF[6];
+//		TIM1->CCR1 = 1250;
+//		TIM1->CCR4 = 1250;
+//	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13|GPIO_PIN_15, GPIO_PIN_SET);
+//	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14|GPIO_PIN_12, GPIO_PIN_RESET);
+	uint8_t BUF[6];
+	
 //	double angle_xz;
 //	double angle_yz;
-
+	printf("helloworld\r\n");
 	while(1)
 	{
 //	Multiple_Read_HMC5883(BUF);
-//	OLED_PrintSignedVal(0,0,(short)HMC5883_anglexy(BUF));
+	OLED_PrintSignedVal(0,0,(short)HMC5883_anglexy(BUF));
 //	OLED_PrintSignedVal(0,2,(short)(BUF[0] << 8 | BUF[1]));
 //	printf("5883data:%f\r\n",HMC5883_anglexy(BUF));
 //	printf("counter :%d\r\n",__HAL_TIM_GetCounter(&htim4));
-//    __HAL_TIM_SetCounter(&htim4, 0);
+//	__HAL_TIM_SetCounter(&htim4, 0);
 //		
-//	printf("elloworld\r\n");
+	
 //		OLED_Clear();
 		
 		

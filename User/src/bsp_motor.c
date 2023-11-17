@@ -88,4 +88,34 @@ void motor_pwm_init()
 //	TIM1->CCR4 = 2500;
 }
 
+void motor(int16_t Speed,TIM_HandleTypeDef *Motor_TIM_Handle,uint32_t TIM_CHANNEL_x)
+{
+	if(Speed==0)
+	{
+		left_motor_stop();
+		right_motor_stop();
+		__HAL_TIM_SET_COMPARE(Motor_TIM_Handle,TIM_CHANNEL_x,0);
+	}else if(Speed>0)
+	{
+		if(TIM_CHANNEL_x == TIM_CHANNEL_4)
+		{
+			left_motor_go();
+		}else if(TIM_CHANNEL_x == TIM_CHANNEL_1)
+		{
+			right_motor_go();
+		}
+		__HAL_TIM_SET_COMPARE(Motor_TIM_Handle,TIM_CHANNEL_x,Speed);
+	}else if(Speed<0)
+	{
+		Speed = -Speed;
+		if(TIM_CHANNEL_x == TIM_CHANNEL_4)
+		{
+			left_motor_return();
+		}else if(TIM_CHANNEL_x == TIM_CHANNEL_1)
+		{
+			right_motor_return();
+		}
+		__HAL_TIM_SET_COMPARE(Motor_TIM_Handle,TIM_CHANNEL_x,Speed);
+	}
+}
 

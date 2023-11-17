@@ -15,6 +15,25 @@ void I2C_Delay()
 //	while (z--)
 //		;
 }
+/********************************************************
+* Function name ：insert_hhistory
+* Description        : Insert to bd_host_history
+* Parameter         ：
+* @ipsql            SQL statement 
+* @host_level        Risk level    
+* @total            The total number of risk 
+* @t_id            task id
+* @t_uuid            task uuid
+* @ipaddr            target ipaddr    
+* @end_time        task end time
+* Return          ：0 --success  ,  other -- fail
+**********************************************************/
+//int insert_hhistory(char* ipsql,risk host_level,int total,int t_id,char* t_uuid,char* ipaddr,long int end_time)
+//{
+//    /*
+//    *    如果程序过于复杂，这里可以写明，具体算法和思路。
+//    */
+//}
 
 /**
  * @brief 产生I2C起始信号

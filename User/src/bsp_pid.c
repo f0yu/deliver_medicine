@@ -1,17 +1,53 @@
 #include "bsp_pid.h"
 #include "bsp_motor.h"
 
+PID_Increment_Struct g_motor_left_pid = {10,1,0,50};
 
 
+
+/**
+ * @brief 初始化pid参数  方便调参
+ */
+void PID_param_init()
+{
+	
+	
+}
+/**
+  * @brief  设置目标值
+  * @param  val		目标值
+	*	@note 	无
+  * @retval 无
+  */
+void set_pid_target(PID_Increment_Struct *pid, float temp_val)
+{
+  pid->target_val = temp_val;    // 设置当前的目标值
+}
+/**
+  * @brief  获取目标值
+  * @param  无
+	*	@note 	无
+  * @retval 目标值
+  */
+float get_pid_target(PID_Increment_Struct *pid)
+{
+  return pid->target_val;    // 设置当前的目标值
+}
+void set_p_i_d(PID_Increment_Struct *pid, float p, float i, float d)
+{
+	pid->Kp = p;    // 设置比例系数 P
+	pid->Ki = i;    // 设置积分系数 I
+	pid->Kd = d;    // 设置微分系数 D
+}
 
 //PID_Increment_Struct PID_openmv_control = {1, 0};&
-float PID_Increment(PID_Increment_Struct *PID, float Current, float Target)
+float PID_Increment(PID_Increment_Struct *PID)
 {
     float err,                                                                                                       //误差
         out,                                                                                                         //输出
         proportion,                                                                                                  //比例
         differential;                                                                                                //微分
-    err = (float)Target - (float)Current;                                                                            //计算误差
+    err = (float)PID->target_val - (float)PID->actual_val;                                                                            //计算误差
     proportion = (float)err - (float)PID->Error_Last1;                                                               //计算比例项
     differential = (float)err - 2 * (float)PID->Error_Last1 + (float)PID->Error_Last2;                               //计算微分项
     out = (float)PID->Out_Last + (float)PID->Kp * proportion + (float)PID->Ki * err + (float)PID->Kd * differential; //计算PID
@@ -21,36 +57,8 @@ float PID_Increment(PID_Increment_Struct *PID, float Current, float Target)
     return out;
 }
 
-void motor(int16_t Speed,TIM_HandleTypeDef *Motor_TIM_Handle,uint32_t TIM_CHANNEL_x)
-{
-	if(Speed==0)
-	{
-		left_motor_stop();
-		right_motor_stop();
-		__HAL_TIM_SET_COMPARE(Motor_TIM_Handle,TIM_CHANNEL_x,0);
-	}else if(Speed>0)
-	{
-		if(TIM_CHANNEL_x == TIM_CHANNEL_4)
-		{
-			left_motor_go();
-		}else if(TIM_CHANNEL_x == TIM_CHANNEL_1)
-		{
-			right_motor_go();
-		}
-		__HAL_TIM_SET_COMPARE(Motor_TIM_Handle,TIM_CHANNEL_x,Speed);
-	}else if(Speed<0)
-	{
-		Speed = -Speed;
-		if(TIM_CHANNEL_x == TIM_CHANNEL_4)
-		{
-			left_motor_return();
-		}else if(TIM_CHANNEL_x == TIM_CHANNEL_1)
-		{
-			right_motor_return();
-		}
-		__HAL_TIM_SET_COMPARE(Motor_TIM_Handle,TIM_CHANNEL_x,Speed);
-	}
-}
+
+
 //void pid_speed_control()
 //{
 

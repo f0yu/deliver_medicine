@@ -35,7 +35,7 @@ void left_motor_go(void);
 
 void left_motor_return(void);
 void left_motor_stop(void);
-
+void motor(int16_t Speed,TIM_HandleTypeDef *Motor_TIM_Handle,uint32_t TIM_CHANNEL_x);
 /******************************************************************************************/
 /* 高级定时器 定义 */
 

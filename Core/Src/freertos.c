@@ -65,7 +65,7 @@ QueueHandle_t g_speed_data_quene;
 osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
-  .stack_size = 60 * 4,
+  .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 
@@ -142,11 +142,11 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
- 	xTaskCreate(lcd_test, "lcd_test", 100, NULL, osPriorityNormal, NULL);
-	xTaskCreate(key_task, "key_task", 100, NULL, osPriorityNormal, NULL);
+ 	xTaskCreate(lcd_test, "lcd_test", 50, NULL, osPriorityNormal, NULL);
+	xTaskCreate(key_task, "key_task", 100, NULL, osPriorityNormal+1, NULL);
 	Menu_Init();
 	Menu_Task_Create();
-//	xTaskCreate(pid_control, "pid_control", 100, NULL, osPriorityNormal+1, NULL);
+//	xTaskCreate(pid_control, "pid_control", 100, NULL, osPriorityNormal+2, NULL);
 //	xTaskCreate(fire_pid, "fire_pid", 100, NULL, osPriorityNormal, NULL);
 //	TIM1->CCR1 = 2500;
 //	TIM1->CCR4 = 2500;
@@ -274,7 +274,7 @@ void lcd_test(void *params)
 	
 //	double angle_xz;
 //	double angle_yz;
-//	printf("helloworld\r\n");
+	printf("helloworld\r\n");
 //	
 //	u8g2Init(&u8g2);
 //	testDrawFrame(&u8g2);

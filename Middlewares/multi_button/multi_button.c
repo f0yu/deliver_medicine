@@ -4,7 +4,7 @@
  */
 
 #include "multi_button.h"
-#include "stm32f1xx_hal.h"
+
 #define EVENT_CB(ev)   if(handle->cb[ev])handle->cb[ev]((Button*)handle)
 
 //button handle list head.
@@ -197,6 +197,8 @@ void button_ticks()
 
 uint8_t read_btn0_gpio(void)
 {
+//	GPIO_PinState data_1 =  HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0);
+//	printf("%d\r\n",data_1);
 	return HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0);
 }
 uint8_t read_btn1_gpio(void)
@@ -217,11 +219,16 @@ void key_task(void* parameter)
 	button_init(&btn1, read_btn1_gpio, 	0);
 	button_attach(&btn0, SINGLE_CLICK,btn0_callback);
 	button_attach(&btn1, SINGLE_CLICK,btn1_callback);
+	button_start(&btn0);
+	button_start(&btn1);
+	printf("KEY1 PRESS_DOWN! \n");
 	while(1)
 	{
 		button_ticks();
+//		printf("KEY1 PRESS_DOWN! \n");
 		xLastWakeTime = xTaskGetTickCount();
 		vTaskDelayUntil(&xLastWakeTime, 5);
+//		vTaskDelay(5);
 	}
 }
 void btn1_callback(void *btn)

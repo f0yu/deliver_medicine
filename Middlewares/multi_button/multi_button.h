@@ -10,6 +10,8 @@
 #include "string.h"
 #include "FreeRTOS.h"
 #include "stm32f1xx_hal.h"
+#include "task.h"
+#include "stdio.h"
 //According to your need to modify the constants.
 #define TICKS_INTERVAL    5	//ms
 #define DEBOUNCE_TICKS    3	//MAX 8

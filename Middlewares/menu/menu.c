@@ -1,5 +1,6 @@
 #include "Menu.h"
 #include <stdlib.h>
+#include "cmsis_os2.h"
 u8g2_t u8g2; 
 uint8_t Page_State=0;
 //选项缓动动画持续时间（次数）
@@ -498,7 +499,7 @@ void Menu_Init(void)
 {
   u8g2Init(&u8g2);
   Menu_Team();
-  Draw_Process();
+//  Draw_Process();
   Draw_Menu(FirstPos,&MainPage,Font_Size,&Mainitem1,&Mainitem1);
   App_Function_Loading();
 }
@@ -508,7 +509,7 @@ TaskHandle_t Menu_Task_Handle;
 BaseType_t Menu_Task_Create(void)
 {
     BaseType_t xReturn=pdPASS;
-    xReturn=xTaskCreate((TaskFunction_t)Menu_Task,"Menu_Task",128,NULL,7,&Menu_Task_Handle);
+    xReturn=xTaskCreate((TaskFunction_t)Menu_Task,"Menu_Task",128,NULL,osPriorityNormal,&Menu_Task_Handle);
     if (pdPASS==xReturn)
     {
         return pdPASS;

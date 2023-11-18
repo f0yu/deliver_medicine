@@ -31,7 +31,7 @@
 
 #include <stdint.h>
 
-#define OLED_IIC_MODE_SOFT 1
+#define OLED_IIC_MODE_SOFT 0
 
 
 #if OLED_IIC_MODE_SOFT

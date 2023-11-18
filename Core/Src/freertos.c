@@ -110,9 +110,9 @@ void vApplicationIdleHook( void )
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-	OLED_Init();
-	OLED_Clear();
-	Init_HMC5883();
+//	OLED_Init();
+//	OLED_Clear();
+//	Init_HMC5883();
 
   /* USER CODE END Init */
 
@@ -142,14 +142,14 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
- 	xTaskCreate(lcd_test, "lcd_test", 100, NULL, osPriorityNormal, NULL);
-	xTaskCreate(pid_control, "pid_control", 100, NULL, osPriorityNormal+1, NULL);
+ 	xTaskCreate(lcd_test, "lcd_test", 200, NULL, osPriorityNormal, NULL);
+//	xTaskCreate(pid_control, "pid_control", 100, NULL, osPriorityNormal+1, NULL);
 //	xTaskCreate(fire_pid, "fire_pid", 100, NULL, osPriorityNormal, NULL);
 //	TIM1->CCR1 = 2500;
 //	TIM1->CCR4 = 2500;
 //	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13|GPIO_PIN_15, GPIO_PIN_SET);
 //	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14|GPIO_PIN_12, GPIO_PIN_RESET);
-	xTimerStart(g_motor_timer,0);
+//	xTimerStart(g_motor_timer,0);
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -260,22 +260,26 @@ void fire_pid(void *params)
 	
 }
 
-
+u8g2_t u8g2; 
 void lcd_test(void *params)
 {
 //		TIM1->CCR1 = 1250;
 //		TIM1->CCR4 = 1250;
 //	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13|GPIO_PIN_15, GPIO_PIN_SET);
 //	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14|GPIO_PIN_12, GPIO_PIN_RESET);
-	uint8_t BUF[6];
+//	uint8_t BUF[6];
 	
 //	double angle_xz;
 //	double angle_yz;
-	printf("helloworld\r\n");
+//	printf("helloworld\r\n");
+	
+	u8g2Init(&u8g2);
+	testDrawFrame(&u8g2);
+//	testDrawPixelToFillScreen(&u8g2);
 	while(1)
 	{
 //	Multiple_Read_HMC5883(BUF);
-	OLED_PrintSignedVal(0,0,(short)HMC5883_anglexy(BUF));
+//	OLED_PrintSignedVal(0,0,(short)HMC5883_anglexy(BUF));
 //	OLED_PrintSignedVal(0,2,(short)(BUF[0] << 8 | BUF[1]));
 //	printf("5883data:%f\r\n",HMC5883_anglexy(BUF));
 //	printf("counter :%d\r\n",__HAL_TIM_GetCounter(&htim4));
@@ -283,9 +287,10 @@ void lcd_test(void *params)
 //		
 	
 //		OLED_Clear();
-		
-		
-		osDelay(10);
+//		testDrawFrame(&u8g2);
+//		testDrawRBox(&u8g2);
+		testDrawMulti(&u8g2);
+//		osDelay(100);
 
 	}
 	

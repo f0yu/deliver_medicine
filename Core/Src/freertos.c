@@ -142,7 +142,9 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
- 	xTaskCreate(lcd_test, "lcd_test", 200, NULL, osPriorityNormal, NULL);
+ 	xTaskCreate(lcd_test, "lcd_test", 100, NULL, osPriorityNormal, NULL);
+	Menu_Init();
+	Menu_Task_Create();
 //	xTaskCreate(pid_control, "pid_control", 100, NULL, osPriorityNormal+1, NULL);
 //	xTaskCreate(fire_pid, "fire_pid", 100, NULL, osPriorityNormal, NULL);
 //	TIM1->CCR1 = 2500;
@@ -260,7 +262,7 @@ void fire_pid(void *params)
 	
 }
 
-u8g2_t u8g2; 
+extern u8g2_t u8g2; 
 void lcd_test(void *params)
 {
 //		TIM1->CCR1 = 1250;
@@ -272,9 +274,9 @@ void lcd_test(void *params)
 //	double angle_xz;
 //	double angle_yz;
 //	printf("helloworld\r\n");
-	
-	u8g2Init(&u8g2);
-	testDrawFrame(&u8g2);
+//	
+//	u8g2Init(&u8g2);
+//	testDrawFrame(&u8g2);
 //	testDrawPixelToFillScreen(&u8g2);
 	while(1)
 	{
@@ -289,8 +291,8 @@ void lcd_test(void *params)
 //		OLED_Clear();
 //		testDrawFrame(&u8g2);
 //		testDrawRBox(&u8g2);
-		testDrawMulti(&u8g2);
-//		osDelay(100);
+//		testDrawMulti(&u8g2);
+		osDelay(100);
 
 	}
 	

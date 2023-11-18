@@ -1,7 +1,9 @@
 #include "bsp_pid.h"
 #include "bsp_motor.h"
 
-PID_Increment_Struct g_motor_left_pid = {10,1,0,50};
+PID_Increment_Struct g_motor_right_pid = {45,8,1,50};
+
+PID_Increment_Struct g_motor_left_pid = {45,8,1,50};
 
 
 

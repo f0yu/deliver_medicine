@@ -142,13 +142,13 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
-// 	xTaskCreate(lcd_test, "lcd_test", 100, NULL, osPriorityNormal, NULL);
-//	xTaskCreate(pid_control, "pid_control", 100, NULL, osPriorityNormal+1, NULL);
+ 	xTaskCreate(lcd_test, "lcd_test", 100, NULL, osPriorityNormal, NULL);
+	xTaskCreate(pid_control, "pid_control", 100, NULL, osPriorityNormal+1, NULL);
 //	xTaskCreate(fire_pid, "fire_pid", 100, NULL, osPriorityNormal, NULL);
-	TIM1->CCR1 = 2500;
-	TIM1->CCR4 = 2500;
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13|GPIO_PIN_15, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14|GPIO_PIN_12, GPIO_PIN_RESET);
+//	TIM1->CCR1 = 2500;
+//	TIM1->CCR4 = 2500;
+//	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13|GPIO_PIN_15, GPIO_PIN_SET);
+//	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14|GPIO_PIN_12, GPIO_PIN_RESET);
 	xTimerStart(g_motor_timer,0);
   /* USER CODE END RTOS_THREADS */
 
@@ -183,10 +183,11 @@ void motor_time_isq(void *params)
 {
 	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 	Speed_Data_Struct car_speed;
-//	car_speed.left_speed =   Get_Speed(&htim2);
+	car_speed.left_angel =   Get_Angle(&htim2);
+	car_speed.right_angel =   Get_Angle(&htim4);
+	car_speed.left_speed =   -Get_Speed(&htim2);
 	car_speed.right_speed =   Get_Speed(&htim4);
-//	car_speed.left_angel =   Get_Angle(&htim2);
-//	car_speed.right_angel =   Get_Angle(&htim4);
+
 	xQueueOverwriteFromISR(g_speed_data_quene,&car_speed,&xHigherPriorityTaskWoken);
 //	printf("car_speed: %f,%f\r\n",car_speed.right_speed,car_speed.left_speed);
 }
@@ -194,27 +195,53 @@ void pid_control(void *params)
 {
 	Speed_Data_Struct car_speed ={0,0,0,0};
 	int16_t pid_data_right = 0;
-	TIM1->CCR1 = 2500;
-	TIM1->CCR4 = 2500;
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13|GPIO_PIN_15, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14|GPIO_PIN_12, GPIO_PIN_RESET);
+	int16_t pid_data_left = 0;
+//	TIM1->CCR1 = 0;
+//	TIM1->CCR4 = 0;
+//	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13|GPIO_PIN_15, GPIO_PIN_SET);
+//	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14|GPIO_PIN_12, GPIO_PIN_RESET);
 	while(1)
 	{
 		
 		xQueueReceive(g_speed_data_quene,&car_speed,portMAX_DELAY);
 //对pid进行控制
-		g_motor_left_pid.actual_val = car_speed.right_speed;
-		pid_data_right = -PID_Increment(&g_motor_left_pid);
-		if (pid_data_right > 7000)
-            pid_data_right = 7000;
-        else if (pid_data_right < -7000)
-            pid_data_right = -7000;
-//		motor((int16_t)pid_data_right,&htim1,TIM_CHANNEL_4);
-//		printf("car_speed: %d,%d\r\n",pid_data_right,(int16_t)car_speed.right_speed);
-	
+		g_motor_right_pid.actual_val = car_speed.right_speed;
+		g_motor_left_pid.actual_val = car_speed.left_speed;
+		pid_data_right = -PID_Increment(&g_motor_right_pid);
+		pid_data_left = -PID_Increment(&g_motor_right_pid);
+		if (pid_data_right > 8000)
+		{
+			pid_data_right = 8000;
+            motor(0,&htim1,TIM_CHANNEL_4);
+		}
+        else if (pid_data_right < -8000)
+		{
+            pid_data_right = -8000;
+			motor(0,&htim1,TIM_CHANNEL_4);
+		}
+		else 
+		{
+			motor(pid_data_right,&htim1,TIM_CHANNEL_4);
+		}
+		if (pid_data_left > 8000)
+		{
+			pid_data_left = 8000;
+            motor(0,&htim1,TIM_CHANNEL_1);
+		}
+        else if (pid_data_left < -8000)
+		{
+            pid_data_left = -8000;
+			motor(0,&htim1,TIM_CHANNEL_1);
+		}
+		else 
+		{
+			motor(pid_data_left,&htim1,TIM_CHANNEL_1);
+		}
+//		printf("car_speed: %d,%d\r\n",pid_data_left,(int16_t)car_speed.left_speed);
 	}
 }
-	uint32_t a = 100;
+
+uint32_t a = 100;
 void fire_pid(void *params)
 {
 	protocol_init();
@@ -223,10 +250,10 @@ void fire_pid(void *params)
 	while(1)
 	{
 		receiving_process();
-		//set_computer_value(SEND_STOP_CMD,CURVES_CH1,&a,1);
+//set_computer_value(SEND_STOP_CMD,CURVES_CH1,&a,1);
 //		a++;
-//			set_computer_value(SEND_STOP_CMD, CURVES_CH1, NULL, 0);    // 同步上位机的启动按钮状态
-			//set_computer_value(SEND_FACT_CMD, CURVES_CH1, &a, 1);     // 给通道 1 发送目标值
+//		set_computer_value(SEND_STOP_CMD, CURVES_CH1, NULL, 0);    // 同步上位机的启动按钮状态
+//set_computer_value(SEND_FACT_CMD, CURVES_CH1, &a, 1);     // 给通道 1 发送目标值
 		
 		osDelay(10);
 	}

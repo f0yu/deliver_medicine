@@ -23,7 +23,7 @@ float Get_Speed(TIM_HandleTypeDef *Encoder_TIM_Handle)
     float Speed = 0;
     zj = __HAL_TIM_GetCounter(Encoder_TIM_Handle);
     __HAL_TIM_SetCounter(Encoder_TIM_Handle, 0);
-	printf("car_speed: %d,\r\n",zj);
+//	printf("car_speed: %d,\r\n",zj);
     Speed = (float)(zj * 100 * 60) / (4 * 448 * 30);
     return Speed;
 }

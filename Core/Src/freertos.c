@@ -143,6 +143,7 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
  	xTaskCreate(lcd_test, "lcd_test", 100, NULL, osPriorityNormal, NULL);
+	xTaskCreate(key_task, "key_task", 100, NULL, osPriorityNormal, NULL);
 	Menu_Init();
 	Menu_Task_Create();
 //	xTaskCreate(pid_control, "pid_control", 100, NULL, osPriorityNormal+1, NULL);

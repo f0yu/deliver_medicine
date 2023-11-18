@@ -41,6 +41,7 @@ extern "C" {
 #include "stm32_u8g2.h"
 #include "U8g2_User.h"
 #include "Menu.h"
+#include "multi_button.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

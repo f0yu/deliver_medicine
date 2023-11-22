@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xB</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;../User/inc;../User/src;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3;../Drivers/DshanMCU-F103;../Middlewares/protocol;../Middlewares/u8g2lib/inc;../Middlewares/U8G2_USER;../Middlewares/menu;../Middlewares/multi_button</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;../User/inc;../User/src;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3;../Drivers/DshanMCU-F103;../Middlewares/protocol;../Middlewares/u8g2lib/inc;../Middlewares/U8G2_USER;../Middlewares/menu;../Middlewares/multi_button;..\User\SimpleVL53L0X</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1711,11 +1711,6 @@
               <FilePath>..\Middlewares\u8g2lib\src\u8g2_setup.c</FilePath>
             </File>
             <File>
-              <FileName>U8g2lib.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\Middlewares\u8g2lib\src\U8g2lib.cpp</FilePath>
-            </File>
-            <File>
               <FileName>u8log.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Middlewares\u8g2lib\src\u8log.c</FilePath>
@@ -1809,6 +1804,46 @@
               <FileName>u8x8_u16toa.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Middlewares\u8g2lib\src\u8x8_u16toa.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Divers/SimpleVL53L0x</GroupName>
+          <Files>
+            <File>
+              <FileName>ST_I2C.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\SimpleVL53L0X\ST_I2C.c</FilePath>
+            </File>
+            <File>
+              <FileName>vl53l0x_api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\SimpleVL53L0X\vl53l0x_api.c</FilePath>
+            </File>
+            <File>
+              <FileName>vl53l0x_api_calibration.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\SimpleVL53L0X\vl53l0x_api_calibration.c</FilePath>
+            </File>
+            <File>
+              <FileName>vl53l0x_api_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\SimpleVL53L0X\vl53l0x_api_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>vl53l0x_api_ranging.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\SimpleVL53L0X\vl53l0x_api_ranging.c</FilePath>
+            </File>
+            <File>
+              <FileName>vl53l0x_api_strings.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\SimpleVL53L0X\vl53l0x_api_strings.c</FilePath>
+            </File>
+            <File>
+              <FileName>VL53l0x_i2c_dev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\SimpleVL53L0X\VL53l0x_i2c_dev.c</FilePath>
             </File>
           </Files>
         </Group>

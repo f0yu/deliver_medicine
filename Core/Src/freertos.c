@@ -142,7 +142,7 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
- 	xTaskCreate(lcd_test, "lcd_test", 50, NULL, osPriorityNormal, NULL);
+ 	xTaskCreate(lcd_test, "lcd_test", 500, NULL, osPriorityNormal, NULL);
 //	xTaskCreate(key_task, "key_task", 100, NULL, osPriorityNormal+1, NULL);
 //	Menu_Init();
 //	Menu_Task_Create();
@@ -264,6 +264,8 @@ void fire_pid(void *params)
 }
 
 extern u8g2_t u8g2; 
+extern void VL53L0X_Init(void);
+extern uint16_t VL53L0X_GetValue(void);
 void lcd_test(void *params)
 {
 //		TIM1->CCR1 = 1250;
@@ -275,12 +277,14 @@ void lcd_test(void *params)
 //	double angle_xz;
 //	double angle_yz;
 	printf("helloworld\r\n");
+	VL53L0X_Init();
 //	
 //	u8g2Init(&u8g2);
 //	testDrawFrame(&u8g2);
 //	testDrawPixelToFillScreen(&u8g2);
 	while(1)
 	{
+		printf("d=%d\r\n",VL53L0X_GetValue());
 //	Multiple_Read_HMC5883(BUF);
 //	OLED_PrintSignedVal(0,0,(short)HMC5883_anglexy(BUF));
 //	OLED_PrintSignedVal(0,2,(short)(BUF[0] << 8 | BUF[1]));
@@ -293,7 +297,7 @@ void lcd_test(void *params)
 //		testDrawFrame(&u8g2);
 //		testDrawRBox(&u8g2);
 //		testDrawMulti(&u8g2);
-		osDelay(100);
+//		osDelay(100);
 
 	}
 	

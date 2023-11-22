@@ -74,7 +74,7 @@ VL53L0X_Error VL53L0X_UpdateByte(VL53L0X_DEV Dev, uint8_t index, uint8_t AndData
 //!该函数是等待用函数 要改成对应环境的Delay
 VL53L0X_Error VL53L0X_PollingDelay(VL53L0X_DEV Dev)
 {
-	HAL_Delay(5);
+	HAL_Delay(10);
 	return 0;
 }
             /** @} */

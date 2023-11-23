@@ -247,12 +247,12 @@ void pid_control(void *params)
 
 void fire_pid(void *params)
 {
-	 int32_t a_test = 100;
+	 uint32_t a_test = 100;
 	protocol_init();
 //	set_computer_value(SEND_TARGET_CMD, CURVES_CH1, &a, 1); 
 	while(1)
 	{
-//		receiving_process();
+		receiving_process();
 //set_computer_value(SEND_STOP_CMD,CURVES_CH1,&a,1);
 //		a++;
 //		set_computer_value(SEND_STOP_CMD, CURVES_CH1, NULL, 0);    // 同步上位机的启动按钮状态
@@ -260,7 +260,7 @@ void fire_pid(void *params)
 		
 		set_computer_value(SEND_FACT_CMD, CURVES_CH1, &a_test, 1);     // 给通道 1 发送目标值
 		
-		osDelay(10);
+		osDelay(100);
 	}
 	
 }

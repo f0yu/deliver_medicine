@@ -211,3 +211,13 @@ double HMC5883_anglexy(unsigned char *BUF)
 	angle_xy = atan2((double)y,(double)x)*(180/3.14159265)+180;
 	return angle_xy;
 }
+void read_hmc_task(void * parms)
+{
+	uint8_t BUF[6];
+	Init_HMC5883();
+	while(1)
+	{
+		Multiple_Read_HMC5883(BUF);
+		vTaskDelay(20);
+	}
+}

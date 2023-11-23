@@ -424,4 +424,18 @@ void set_computer_value(uint8_t cmd, uint8_t ch, void *data, uint8_t num)
 //  HAL_UART_Transmit(&huart2, (uint8_t *)&sum, sizeof(sum), 0xFFFFF);    
 }
 
+
+
+void fire_pid_task(void *params)
+{
+	 uint32_t a_test = 100;
+	protocol_init();
+	while(1)
+	{
+		receiving_process();
+		set_computer_value(SEND_FACT_CMD, CURVES_CH1, &a_test, 1);     // 给通道 1 发送目标值
+		vTaskDelay(10);
+	}
+	
+}
 /**********************************************************************************************/

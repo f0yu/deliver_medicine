@@ -112,6 +112,9 @@ int8_t receiving_process(void);
   */
 void set_computer_value(uint8_t cmd, uint8_t ch, void *data, uint8_t num);
 
+
+
+void fire_pid_task(void *params);
 #ifdef _cplusplus
 }
 #endif   

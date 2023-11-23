@@ -48,8 +48,8 @@
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
 void pid_control(void *params);
-void fire_pid(void *params);
-void lcd_test(void *params);
+
+void lcd_test_task(void *params);
 void motor_time_isq(void *params);
 
 extern TIM_HandleTypeDef htim1;
@@ -147,7 +147,7 @@ void MX_FREERTOS_Init(void) {
 //	Menu_Init();
 //	Menu_Task_Create();
 //	xTaskCreate(pid_control, "pid_control", 100, NULL, osPriorityNormal+2, NULL);
-	xTaskCreate(fire_pid, "fire_pid", 500, NULL, osPriorityNormal, NULL);
+	xTaskCreate(fire_pid_task, "fire_pid", 500, NULL, osPriorityNormal, NULL);
 //	TIM1->CCR1 = 2500;
 //	TIM1->CCR4 = 2500;
 //	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13|GPIO_PIN_15, GPIO_PIN_SET);
@@ -245,29 +245,11 @@ void pid_control(void *params)
 }
 
 
-void fire_pid(void *params)
-{
-	 uint32_t a_test = 100;
-	protocol_init();
-//	set_computer_value(SEND_TARGET_CMD, CURVES_CH1, &a, 1); 
-	while(1)
-	{
-		receiving_process();
-//set_computer_value(SEND_STOP_CMD,CURVES_CH1,&a,1);
-//		a++;
-//		set_computer_value(SEND_STOP_CMD, CURVES_CH1, NULL, 0);    // 同步上位机的启动按钮状态
-		//a++;
-		
-		set_computer_value(SEND_FACT_CMD, CURVES_CH1, &a_test, 1);     // 给通道 1 发送目标值
-		
-		osDelay(100);
-	}
-	
-}
+
 
 extern u8g2_t u8g2; 
-extern void VL53L0X_Init(void);
-extern uint16_t VL53L0X_GetValue(void);
+
+
 void lcd_test(void *params)
 {
 //		TIM1->CCR1 = 1250;

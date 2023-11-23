@@ -126,7 +126,7 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
- g_motor_timer = xTimerCreate("motor_timer",10,pdTRUE,NULL,motor_time_isq);
+// g_motor_timer = xTimerCreate("motor_timer",10,pdTRUE,NULL,motor_time_isq);
 	
   /* USER CODE END RTOS_TIMERS */
 
@@ -142,12 +142,12 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
- 	xTaskCreate(lcd_test, "lcd_test", 500, NULL, osPriorityNormal, NULL);
+// 	xTaskCreate(lcd_test, "lcd_test", 128, NULL, osPriorityNormal, NULL);
 //	xTaskCreate(key_task, "key_task", 100, NULL, osPriorityNormal+1, NULL);
 //	Menu_Init();
 //	Menu_Task_Create();
 //	xTaskCreate(pid_control, "pid_control", 100, NULL, osPriorityNormal+2, NULL);
-//	xTaskCreate(fire_pid, "fire_pid", 100, NULL, osPriorityNormal, NULL);
+	xTaskCreate(fire_pid, "fire_pid", 500, NULL, osPriorityNormal, NULL);
 //	TIM1->CCR1 = 2500;
 //	TIM1->CCR4 = 2500;
 //	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13|GPIO_PIN_15, GPIO_PIN_SET);
@@ -244,19 +244,21 @@ void pid_control(void *params)
 	}
 }
 
-uint32_t a = 100;
+
 void fire_pid(void *params)
 {
+	 int32_t a_test = 100;
 	protocol_init();
-
-
+//	set_computer_value(SEND_TARGET_CMD, CURVES_CH1, &a, 1); 
 	while(1)
 	{
-		receiving_process();
+//		receiving_process();
 //set_computer_value(SEND_STOP_CMD,CURVES_CH1,&a,1);
 //		a++;
 //		set_computer_value(SEND_STOP_CMD, CURVES_CH1, NULL, 0);    // 同步上位机的启动按钮状态
-//set_computer_value(SEND_FACT_CMD, CURVES_CH1, &a, 1);     // 给通道 1 发送目标值
+		//a++;
+		
+		set_computer_value(SEND_FACT_CMD, CURVES_CH1, &a_test, 1);     // 给通道 1 发送目标值
 		
 		osDelay(10);
 	}
@@ -276,18 +278,14 @@ void lcd_test(void *params)
 	
 //	double angle_xz;
 //	double angle_yz;
-	printf("helloworld\r\n");
+//	printf("helloworld\r\n");
 //	VL53L0X_Init();
 //	
 //	u8g2Init(&u8g2);
 //	testDrawFrame(&u8g2);
 //	testDrawPixelToFillScreen(&u8g2);
-	protocol_init();
 	while(1)
-	{	receiving_process();
-		a++;
-//		set_computer_value(SEND_STOP_CMD, CURVES_CH1, NULL, 0);
-		set_computer_value(SEND_FACT_CMD, CURVES_CH1, &a, 1); 
+	{	
 		
 //		printf("d=%d\r\n",VL53L0X_GetValue());
 //	Multiple_Read_HMC5883(BUF);

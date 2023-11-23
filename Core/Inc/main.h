@@ -34,7 +34,14 @@ extern "C" {
 #include "driver_oled.h"
 #include "hmc5883.h"
 #include "stdio.h"
-
+#include "bsp_encoder.h"
+#include "bsp_motor.h"
+#include "protocol.h"
+#include "bsp_pid.h"
+#include "stm32_u8g2.h"
+#include "U8g2_User.h"
+#include "Menu.h"
+#include "multi_button.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

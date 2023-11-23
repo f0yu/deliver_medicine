@@ -40,7 +40,7 @@
  ***********************************************************************/
 void udelay(int us)
 {
-#if 0    
+#if 1    
     uint32_t ticks;
     uint32_t told, tnow, tcnt = 0;
     uint32_t reload = SysTick->LOAD;

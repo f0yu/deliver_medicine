@@ -142,12 +142,12 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
-// 	xTaskCreate(lcd_test, "lcd_test", 128, NULL, osPriorityNormal, NULL);
+ 	xTaskCreate(lcd_test_task, "lcd_test", 128, NULL, osPriorityNormal, NULL);
 //	xTaskCreate(key_task, "key_task", 100, NULL, osPriorityNormal+1, NULL);
 //	Menu_Init();
 //	Menu_Task_Create();
 //	xTaskCreate(pid_control, "pid_control", 100, NULL, osPriorityNormal+2, NULL);
-	xTaskCreate(fire_pid_task, "fire_pid", 500, NULL, osPriorityNormal, NULL);
+//	xTaskCreate(fire_pid_task, "fire_pid", 500, NULL, osPriorityNormal, NULL);
 //	TIM1->CCR1 = 2500;
 //	TIM1->CCR4 = 2500;
 //	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13|GPIO_PIN_15, GPIO_PIN_SET);
@@ -250,7 +250,7 @@ void pid_control(void *params)
 extern u8g2_t u8g2; 
 
 
-void lcd_test(void *params)
+void lcd_test_task(void *params)
 {
 //		TIM1->CCR1 = 1250;
 //		TIM1->CCR4 = 1250;

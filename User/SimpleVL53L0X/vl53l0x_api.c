@@ -3045,8 +3045,8 @@ void measure_distance(void *param)
 	VL53L0X_Init();
 	while(1)
 	{
-//		VL53L0X_GetValue();
-		printf("distance_data:%d\r\n",VL53L0X_GetValue());
+		VL53L0X_GetValue();
+//		printf("distance_data:%d\r\n",VL53L0X_GetValue());
 //		vTaskDelay(20);
 	}
 	

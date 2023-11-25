@@ -146,7 +146,7 @@ void MX_FREERTOS_Init(void) {
 // 	xTaskCreate(lcd_test_task, "lcd_test", 256, NULL, osPriorityNormal, NULL);
 	xTaskCreate(key_task, "key_task", 128, NULL, osPriorityNormal, NULL);
 	xTaskCreate(read_hmc_task, "hmc_task", 128, NULL, osPriorityNormal, NULL);
-//	xTaskCreate(measure_distance, "dis_task", 128, NULL, osPriorityNormal, NULL);
+	xTaskCreate(measure_distance, "dis_task", 128, NULL, osPriorityNormal, NULL);
 	
 	Menu_Init();
 	Menu_Task_Create();

@@ -218,6 +218,7 @@ void read_hmc_task(void * parms)
 	while(1)
 	{
 		Multiple_Read_HMC5883(BUF);
+//		printf("5883data:%f\r\n",HMC5883_anglexy(BUF));
 		vTaskDelay(20);
 	}
 }

@@ -21,6 +21,7 @@
 void Init_HMC5883(void );
 void Multiple_Read_HMC5883(unsigned char *BUF);
 double HMC5883_anglexy(unsigned char *BUF);
+void read_hmc_task(void * parms);
 #endif  //__HMC5883_H
 
 

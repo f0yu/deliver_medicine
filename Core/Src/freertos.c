@@ -22,7 +22,7 @@
 #include "task.h"
 #include "main.h"
 #include "cmsis_os.h"
-
+#include "vl53l0x_api.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include  <math.h>    //Keil library 
@@ -96,8 +96,8 @@ void vApplicationIdleHook( void )
    memory allocated by the kernel to any task that has since been deleted. */
 //	int i;
 //	vTaskList((char *)pcWriteBuffer);
-//	for (i = 0; i < 16; i++)
-//		printf("-");
+////	for (i = 0; i < 16; i++)
+////		printf("-");
 //	printf("\n\r");
 //	printf("%s\n\r", pcWriteBuffer);
 	
@@ -139,14 +139,18 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* creation of defaultTask */
-  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+//  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
 // 	xTaskCreate(lcd_test_task, "lcd_test", 256, NULL, osPriorityNormal, NULL);
-	xTaskCreate(key_task, "key_task", 256, NULL, osPriorityNormal, NULL);
+	xTaskCreate(key_task, "key_task", 128, NULL, osPriorityNormal, NULL);
+	xTaskCreate(read_hmc_task, "hmc_task", 128, NULL, osPriorityNormal, NULL);
+//	xTaskCreate(measure_distance, "dis_task", 128, NULL, osPriorityNormal, NULL);
+	
 	Menu_Init();
 	Menu_Task_Create();
+	
 //	xTaskCreate(pid_control, "pid_control", 100, NULL, osPriorityNormal+2, NULL);
 //	xTaskCreate(fire_pid_task, "fire_pid", 500, NULL, osPriorityNormal, NULL);
 //	TIM1->CCR1 = 2500;
@@ -264,26 +268,24 @@ void lcd_test_task(void *params)
 //	printf("helloworld\r\n");
 //	VL53L0X_Init();
 //	
-	u8g2Init(&u8g2);
-	testDrawFrame(&u8g2);
-	testDrawPixelToFillScreen(&u8g2);
+//	u8g2Init(&u8g2);
+//	testDrawFrame(&u8g2);
+//	testDrawPixelToFillScreen(&u8g2);
 	while(1)
-	{	
+	{
 		
 //		printf("d=%d\r\n",VL53L0X_GetValue());
 //	Multiple_Read_HMC5883(BUF);
-//	OLED_PrintSignedVal(0,0,(short)HMC5883_anglexy(BUF));
-//	OLED_PrintSignedVal(0,2,(short)(BUF[0] << 8 | BUF[1]));
 //	printf("5883data:%f\r\n",HMC5883_anglexy(BUF));
 //	printf("counter :%d\r\n",__HAL_TIM_GetCounter(&htim4));
 //	__HAL_TIM_SetCounter(&htim4, 0);
 //		
 	
 //		OLED_Clear();
-		testDrawFrame(&u8g2);
-		testDrawRBox(&u8g2);
-		testDrawMulti(&u8g2);
-		osDelay(100);
+//		testDrawFrame(&u8g2);
+//		testDrawRBox(&u8g2);
+//		testDrawMulti(&u8g2);
+//		osDelay(100);
 
 	}
 	

@@ -1943,6 +1943,9 @@ VL53L0X_API VL53L0X_Error VL53L0X_GetReferenceSpads(VL53L0X_DEV Dev,
 
 /** @} VL53L0X_cut11_group */
 
+	
+
+void measure_distance(void *param);
 #ifdef __cplusplus
 }
 #endif

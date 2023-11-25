@@ -1,25 +1,31 @@
 #include "stm32_u8g2.h"
+//#include "stm32f10x_i2c.h"
 #include "i2c.h"
+
 #ifdef HARDWARE_I2C
 //uint8_t u8x8_byte_hw_i2c(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_ptr) {
 //    uint8_t* data = (uint8_t*) arg_ptr;
 //    switch(msg) {
 //        case U8X8_MSG_BYTE_SEND:
-//            HAL_I2C_Master_Transmit(g_pHI2COLED, OELD_I2C_ADDR, tmpbuf, 2, OLED_TIMEOUT);
+//            while( arg_int-- > 0 ) {
+//                I2C_SendData(I2C2, *data++);
+//                while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTED)) 
+//                    continue;
+//            }
 //            break;
 //        case U8X8_MSG_BYTE_INIT:
 //        /* add your custom code to init i2c subsystem */
-////            RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C2, ENABLE);
-////            I2C_InitTypeDef I2C_InitStructure = {
-////                .I2C_Mode = I2C_Mode_I2C,
-////                .I2C_DutyCycle = I2C_DutyCycle_2,
-////                .I2C_OwnAddress1 = 0x10,
-////                .I2C_Ack = I2C_Ack_Enable,
-////                .I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit,
-////                .I2C_ClockSpeed = 400000
-////            };
-////            I2C_Init(I2C2, &I2C_InitStructure);
-////            I2C_Cmd(I2C2, ENABLE);  
+//            RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C2, ENABLE);
+//            I2C_InitTypeDef I2C_InitStructure = {
+//                .I2C_Mode = I2C_Mode_I2C,
+//                .I2C_DutyCycle = I2C_DutyCycle_2,
+//                .I2C_OwnAddress1 = 0x10,
+//                .I2C_Ack = I2C_Ack_Enable,
+//                .I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit,
+//                .I2C_ClockSpeed = 400000
+//            };
+//            I2C_Init(I2C2, &I2C_InitStructure);
+//            I2C_Cmd(I2C2, ENABLE);  
 //            break;
 //        case U8X8_MSG_BYTE_SET_DC:
 //        /* ignored for i2c */

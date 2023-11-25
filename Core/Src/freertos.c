@@ -60,6 +60,7 @@ extern TIM_HandleTypeDef htim4;
 
 TimerHandle_t g_motor_timer;
 QueueHandle_t g_speed_data_quene;
+QueueHandle_t g_key_data_quene;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -132,8 +133,8 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
-  g_speed_data_quene = xQueueCreate(1,sizeof(Speed_Data_Struct));
-  
+//  g_speed_data_quene = xQueueCreate(1,sizeof(Speed_Data_Struct));
+	g_key_data_quene = xQueueCreate(1,sizeof(Key_Data));
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
@@ -142,10 +143,10 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
- 	xTaskCreate(lcd_test_task, "lcd_test", 128, NULL, osPriorityNormal, NULL);
-//	xTaskCreate(key_task, "key_task", 100, NULL, osPriorityNormal+1, NULL);
-//	Menu_Init();
-//	Menu_Task_Create();
+// 	xTaskCreate(lcd_test_task, "lcd_test", 256, NULL, osPriorityNormal, NULL);
+	xTaskCreate(key_task, "key_task", 256, NULL, osPriorityNormal, NULL);
+	Menu_Init();
+	Menu_Task_Create();
 //	xTaskCreate(pid_control, "pid_control", 100, NULL, osPriorityNormal+2, NULL);
 //	xTaskCreate(fire_pid_task, "fire_pid", 500, NULL, osPriorityNormal, NULL);
 //	TIM1->CCR1 = 2500;
@@ -263,9 +264,9 @@ void lcd_test_task(void *params)
 //	printf("helloworld\r\n");
 //	VL53L0X_Init();
 //	
-//	u8g2Init(&u8g2);
-//	testDrawFrame(&u8g2);
-//	testDrawPixelToFillScreen(&u8g2);
+	u8g2Init(&u8g2);
+	testDrawFrame(&u8g2);
+	testDrawPixelToFillScreen(&u8g2);
 	while(1)
 	{	
 		
@@ -279,9 +280,9 @@ void lcd_test_task(void *params)
 //		
 	
 //		OLED_Clear();
-//		testDrawFrame(&u8g2);
-//		testDrawRBox(&u8g2);
-//		testDrawMulti(&u8g2);
+		testDrawFrame(&u8g2);
+		testDrawRBox(&u8g2);
+		testDrawMulti(&u8g2);
 		osDelay(100);
 
 	}

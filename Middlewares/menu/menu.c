@@ -1,6 +1,8 @@
 #include "Menu.h"
 #include <stdlib.h>
 #include "cmsis_os2.h"
+#include "multi_button.h"
+#include "queue.h"
 u8g2_t u8g2; 
 uint8_t Page_State=0;
 //选项缓动动画持续时间（次数）
@@ -443,53 +445,61 @@ void Menu_Team(void)
 
 xpItem temp_item;
 void (*App_Function)();
-
+extern QueueHandle_t g_key_data_quene;
 static void Menu_Task(void* parameter)
 {
     static uint8_t MENU_STATE=MENU_RUN;
-//   uint8_t disapper=1;     //渐变函数消失速度，越小越慢，最大值为8
+	Key_Data key_data;
+	BaseType_t key_return_data;
+	
+   uint8_t disapper=8;     //渐变函数消失速度，越小越慢，最大值为8
 	temp_item=&Mainitem1;
 	while (1)
 	{
-//        if (key_read()!=0)
-//        {
-//            switch (key_read())
-//            {
-//            case ENTER:
-//                if (temp_item->JumpPage==NULL)
-//                {
-//                    MENU_STATE=APP_RUN;
-//                    ui_disapper(disapper);
-//                    App_Function=temp_item->Item_function;
-//                }
-//                else 
-//                {
-//                    MENU_STATE=MENU_RUN;
-//                    for (size_t i = 0; i < 8; i++)      
-//                    {
-//                        disapper=ui_disapper(disapper);
-//                    }
-//                    Draw_Menu(FirstPos,temp_item->JumpPage,Font_Size,temp_item,temp_item->JumpPage->itemHead);
-//                    temp_item=temp_item->JumpPage->itemHead;
-//                }
-//                break;
-//            case UP:
-//                Draw_Menu(FirstPos,temp_item->location,Font_Size,temp_item,temp_item->lastiTem);
-//                temp_item=temp_item->lastiTem;
-//                MENU_STATE=MENU_RUN;
-//                break;
-//            case DOWN:
-//                Draw_Menu(FirstPos,temp_item->location,Font_Size,temp_item,temp_item->nextiTem);
-//                temp_item=temp_item->nextiTem; 
-//                MENU_STATE=MENU_RUN;
-//                break;
-//            default:
-//                break;
-//            }
+		 key_return_data = xQueueReceive(g_key_data_quene,&key_data,0);
+        if (key_return_data != errQUEUE_EMPTY)
+        {
+            switch(key_data.key_data)
+            {
+            case enter:
+                if (temp_item->JumpPage==NULL)
+                {
+                    MENU_STATE=APP_RUN;
+                    ui_disapper(disapper);
+                    App_Function=temp_item->Item_function;
+                }
+                else 
+                {
+                    MENU_STATE=MENU_RUN;
+                    for (size_t i = 0; i < 8; i++)      
+                    {
+                        disapper=ui_disapper(disapper);
+                    }
+                    Draw_Menu(FirstPos,temp_item->JumpPage,Font_Size,temp_item,temp_item->JumpPage->itemHead);
+                    temp_item=temp_item->JumpPage->itemHead;
+                }
+                break;
+            case up_change:
+                Draw_Menu(FirstPos,temp_item->location,Font_Size,temp_item,temp_item->lastiTem);
+                temp_item=temp_item->lastiTem;
+                MENU_STATE=MENU_RUN;
+                break;
+            case down_change:
+                Draw_Menu(FirstPos,temp_item->location,Font_Size,temp_item,temp_item->nextiTem);
+                temp_item=temp_item->nextiTem; 
+                MENU_STATE=MENU_RUN;
+                break;
+            default:
+                break;
+            }
 //            Key_Open();
-//        }
+        }
 		if (MENU_STATE==APP_RUN)
-		{(*App_Function)();MENU_STATE=MENU_RUN;Draw_Menu(FirstPos,temp_item->location,Font_Size,temp_item,temp_item);MENU_STATE=MENU_RUN;
+		{
+			(*App_Function)();
+			MENU_STATE=MENU_RUN;
+			Draw_Menu(FirstPos,temp_item->location,Font_Size,temp_item,temp_item);
+			MENU_STATE=MENU_RUN;
 //		Key_Open();
 		}
 	}
@@ -509,7 +519,7 @@ TaskHandle_t Menu_Task_Handle;
 BaseType_t Menu_Task_Create(void)
 {
     BaseType_t xReturn=pdPASS;
-    xReturn=xTaskCreate((TaskFunction_t)Menu_Task,"Menu_Task",128,NULL,osPriorityNormal,&Menu_Task_Handle);
+    xReturn=xTaskCreate((TaskFunction_t)Menu_Task,"Menu_Task",256,NULL,osPriorityNormal,&Menu_Task_Handle);
     if (pdPASS==xReturn)
     {
         return pdPASS;

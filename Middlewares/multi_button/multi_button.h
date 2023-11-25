@@ -32,6 +32,15 @@ typedef enum {
 	number_of_event,
 	NONE_PRESS
 }PressEvent;
+//typedef enum {
+//	enter ,
+//	down_change,
+//	up_change,
+//}Key_state;
+
+#define enter 1
+#define down_change 2
+#define up_change 3
 
 typedef struct Button {
 	uint16_t ticks;
@@ -45,6 +54,10 @@ typedef struct Button {
 	BtnCallback  cb[number_of_event];
 	struct Button* next;
 }Button;
+
+typedef struct Key_Data {
+	uint8_t key_data;
+}Key_Data;
 
 #ifdef __cplusplus
 extern "C" {

@@ -241,19 +241,26 @@ void read_hmc_task(void * parms)
 	{
 		Multiple_Read_HMC5883(BUF);
 		angle_data.car_angle = HMC5883_anglexy(BUF)-init_angle;
-//		angle_data.car_angle = fmod(angle_data.car_angle+180.0,360.0)-180.0;
-		if(angle_data.car_angle>180)
-		{
-			angle_data.car_angle -= 180;
-		}else if(angle_data.car_angle<-180)
-		{
-			angle_data.car_angle += 180;
+		if (angle_data.car_angle <= -180.0) {
+			angle_data.car_angle += 360.0;
+		}else if (angle_data.car_angle > 180.0) {
+			angle_data.car_angle -= 360.0;
 		}
-		angle_data.car_angle =\
-		calculateAngleDifference(angle_data.car_angle,init_angle);
 		xQueueSend(g_angle_data_quene,&angle_data.car_angle,portMAX_DELAY);
+		vTaskDelay(20);
+//		angle_data.car_angle = fmod(angle_data.car_angle+180.0,360.0)-180.0;
+//		if(angle_data.car_angle>180)
+//		{
+//			angle_data.car_angle -= 180;
+//		}else if(angle_data.car_angle<-180)
+//		{
+//			angle_data.car_angle += 180;
+//		}
+//		angle_data.car_angle =\
+//		calculateAngleDifference(angle_data.car_angle,init_angle);
+		
 		//将数据传输出去
 //		printf("5883data:%f\r\n",HMC5883_anglexy(BUF));
-		vTaskDelay(20);
+		
 	}
 }

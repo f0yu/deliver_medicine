@@ -5,19 +5,19 @@
 #include "stm32f1xx_hal.h"
 
 #define RIGHT_AIN1_GPIO_PORT                  GPIOB
-#define RIGHT_AIN1_GPIO_PIN                   GPIO_PIN_14
+#define RIGHT_AIN1_GPIO_PIN                   GPIO_PIN_12
 #define RIGHT_AIN1_GPIO_CLK_ENABLE()          do{ __HAL_RCC_GPIOB_CLK_ENABLE(); }while(0)   /* PA口时钟使能 */
 
 #define RIGHT_AIN2_GPIO_PORT                  GPIOB
-#define RIGHT_AIN2_GPIO_PIN                   GPIO_PIN_15
+#define RIGHT_AIN2_GPIO_PIN                   GPIO_PIN_13
 #define RIGHT_AIN2_CLK_ENABLE()               do{ __HAL_RCC_GPIOB_CLK_ENABLE(); }while(0)   /* PA口时钟使能 */
 
 #define LEFT_AIN1_GPIO_PORT                  GPIOB
-#define LEFT_AIN1_GPIO_PIN                   GPIO_PIN_12
+#define LEFT_AIN1_GPIO_PIN                   GPIO_PIN_14
 #define LEFT_AIN1_GPIO_CLK_ENABLE()          do{ __HAL_RCC_GPIOB_CLK_ENABLE(); }while(0)   /* PA口时钟使能 */
 
 #define LEFT_AIN2_GPIO_PORT                  GPIOB
-#define LEFT_AIN2_GPIO_PIN                   GPIO_PIN_13
+#define LEFT_AIN2_GPIO_PIN                   GPIO_PIN_15
 #define LEFT_AIN2_CLK_ENABLE()               do{ __HAL_RCC_GPIOB_CLK_ENABLE(); }while(0)   /* PA口时钟使能 */
 
 

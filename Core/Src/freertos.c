@@ -127,13 +127,13 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
-// g_motor_timer = xTimerCreate("motor_timer",10,pdTRUE,NULL,motor_time_isq);
+	g_motor_timer = xTimerCreate("motor_timer",10,pdTRUE,NULL,motor_time_isq);
 	
   /* USER CODE END RTOS_TIMERS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
-//  g_speed_data_quene = xQueueCreate(1,sizeof(Speed_Data_Struct));
+  g_speed_data_quene = xQueueCreate(1,sizeof(Speed_Data_Struct));
 	g_key_data_quene = xQueueCreate(1,sizeof(Key_Data));
   /* USER CODE END RTOS_QUEUES */
 
@@ -151,13 +151,13 @@ void MX_FREERTOS_Init(void) {
 	Menu_Init();
 	Menu_Task_Create();
 	
-//	xTaskCreate(pid_control, "pid_control", 100, NULL, osPriorityNormal+2, NULL);
+	xTaskCreate(pid_control, "pid_control", 256, NULL, osPriorityNormal+2, NULL);
 //	xTaskCreate(fire_pid_task, "fire_pid", 500, NULL, osPriorityNormal, NULL);
-//	TIM1->CCR1 = 2500;
-//	TIM1->CCR4 = 2500;
-//	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13|GPIO_PIN_15, GPIO_PIN_SET);
-//	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14|GPIO_PIN_12, GPIO_PIN_RESET);
-//	xTimerStart(g_motor_timer,0);
+	TIM1->CCR1 = 0;
+	TIM1->CCR4 = 0;
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13|GPIO_PIN_15, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14|GPIO_PIN_12, GPIO_PIN_RESET);
+	xTimerStart(g_motor_timer,0);
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -215,8 +215,9 @@ void pid_control(void *params)
 //对pid进行控制
 		g_motor_right_pid.actual_val = car_speed.right_speed;
 		g_motor_left_pid.actual_val = car_speed.left_speed;
-		pid_data_right = -PID_Increment(&g_motor_right_pid);
-		pid_data_left = -PID_Increment(&g_motor_right_pid);
+		
+		pid_data_right = PID_Increment(&g_motor_right_pid);
+		pid_data_left = PID_Increment(&g_motor_left_pid);
 		if (pid_data_right > 8000)
 		{
 			pid_data_right = 8000;
@@ -231,6 +232,7 @@ void pid_control(void *params)
 		{
 			motor(pid_data_right,&htim1,TIM_CHANNEL_4);
 		}
+		
 		if (pid_data_left > 8000)
 		{
 			pid_data_left = 8000;

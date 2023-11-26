@@ -25,13 +25,16 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-
+#include "main.h"
 #include "vl53l0x_api.h"
 #include "vl53l0x_tuning.h"
 #include "vl53l0x_interrupt_threshold_settings.h"
 #include "vl53l0x_api_core.h"
 #include "vl53l0x_api_calibration.h"
 #include "vl53l0x_api_strings.h"
+
+
+
 
 #ifndef __KERNEL__
 #include <stdlib.h>
@@ -3034,3 +3037,18 @@ VL53L0X_Error VL53L0X_PerformRefSpadManagement(VL53L0X_DEV Dev,
 
 	return Status;
 }
+
+extern void VL53L0X_Init(void);
+extern uint16_t VL53L0X_GetValue(void);
+void measure_distance(void *param)
+{
+	VL53L0X_Init();
+	while(1)
+	{
+		VL53L0X_GetValue();
+//		printf("distance_data:%d\r\n",VL53L0X_GetValue());
+		vTaskDelay(20);
+	}
+	
+}
+

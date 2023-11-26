@@ -402,7 +402,6 @@ void set_computer_value(uint8_t cmd, uint8_t ch, void *data, uint8_t num)
 {
   uint8_t sum = 0;    // 校验和
   num *= 4;           // 一个参数 4 个字节
-  
   static packet_head_t set_packet;
    
   set_packet.head = FRAME_HEADER;     // 包头 0x59485A53
@@ -413,9 +412,30 @@ void set_computer_value(uint8_t cmd, uint8_t ch, void *data, uint8_t num)
   sum = check_sum(0, (uint8_t *)&set_packet, sizeof(set_packet));       // 计算包头校验和
   sum = check_sum(sum, (uint8_t *)data, num);                           // 计算参数校验和
   
-  HAL_UART_Transmit_DMA(&huart2, (uint8_t *)&set_packet, sizeof(set_packet));    // 发送数据头
-  HAL_UART_Transmit_DMA(&huart2, (uint8_t *)data, num);                          // 发送参数
-  HAL_UART_Transmit_DMA(&huart2, (uint8_t *)&sum, sizeof(sum));                  // 发送校验和
+	HAL_UART_Transmit_DMA(&huart2, (uint8_t *)&set_packet, sizeof(set_packet));    // 发送数据头
+	while ((USART2->SR & 0X40) == 0);
+	HAL_UART_Transmit_DMA(&huart2, (uint8_t *)data, num);                          // 发送参数
+	while ((USART2->SR & 0X40) == 0);
+	HAL_UART_Transmit_DMA(&huart2, (uint8_t *)&sum, sizeof(sum));                  // 发送校验和
+	
+ // huart->gState == HAL_UART_STATE_READY
+//  HAL_UART_Transmit(&huart2, (uint8_t *)&set_packet, sizeof(set_packet), 0xFFFFF);    // ?????????
+//  HAL_UART_Transmit(&huart2, (uint8_t *)data, num, 0xFFFFF);                          // ???????
+//  HAL_UART_Transmit(&huart2, (uint8_t *)&sum, sizeof(sum), 0xFFFFF);    
 }
 
+
+
+void fire_pid_task(void *params)
+{
+	 uint32_t a_test = 100;
+	protocol_init();
+	while(1)
+	{
+		receiving_process();
+		set_computer_value(SEND_FACT_CMD, CURVES_CH1, &a_test, 1);     // 给通道 1 发送目标值
+		vTaskDelay(10);
+	}
+	
+}
 /**********************************************************************************************/

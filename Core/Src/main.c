@@ -100,7 +100,6 @@ int main(void)
 //  MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
 //	OLED_Init();
-//	OLED_Display_On();
 //	OLED_Clear();
 	Encoder_Init();
 	motor_pwm_init();

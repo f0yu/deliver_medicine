@@ -1,12 +1,14 @@
 #include "Menu.h"
 #include <stdlib.h>
 #include "cmsis_os2.h"
+#include "multi_button.h"
+#include "queue.h"
 u8g2_t u8g2; 
 uint8_t Page_State=0;
 //选项缓动动画持续时间（次数）
-uint8_t Options_Time=6;
+uint8_t Options_Time=2;
 //对话框缓动动画持续时间（次数）
-uint8_t Dialog_Time=10;
+uint8_t Dialog_Time=5;
 //1为白天模式，0为黑夜模式
 uint8_t BgColor=0x00;       
 //菜单状态
@@ -151,29 +153,6 @@ void DialogScale_Show(u8g2_t *u8g2,uint16_t x,uint16_t y,uint16_t Tgt_w,uint16_t
         u8g2_SendBuffer(u8g2);
     } while (t<Dialog_Time);
 
-}
-/**
- * @brief 渐变消失函数
- * 
- * 
- */
-uint8_t ui_disapper(uint8_t disapper)
-{ 
-  short disapper_temp = 0;
-  int len = 8 * u8g2_GetBufferTileHeight(&u8g2) * u8g2_GetBufferTileWidth(&u8g2);
-  u8 *p = u8g2_GetBufferPtr(&u8g2); 
-  if(BgColor==0)
-{  for( int i = 0;i< len ;i++) 
-  { p[i] = p[i] & (rand()%0xff) >> disapper; } }
-  else
-{  for( int i = 0;i< len ;i++) 
-  { p[i] = p[i] | (rand()%0xff) >> disapper; } }
-  disapper +=2; 
-  if(disapper >= 8) 
-  {disapper = 0; } 
-  u8g2_SendBuffer(&u8g2);
-  disapper_temp=disapper;
-  return disapper_temp;
 }
 
 void Draw_OptionPlace(uint8_t now_time, xpItem now_item, xpItem next_item)
@@ -443,54 +422,57 @@ void Menu_Team(void)
 
 xpItem temp_item;
 void (*App_Function)();
-
+extern QueueHandle_t g_key_data_quene;
 static void Menu_Task(void* parameter)
 {
     static uint8_t MENU_STATE=MENU_RUN;
+	Key_Data key_data;
+//	BaseType_t key_return_data;
+	
 //   uint8_t disapper=1;     //渐变函数消失速度，越小越慢，最大值为8
 	temp_item=&Mainitem1;
 	while (1)
 	{
-//        if (key_read()!=0)
-//        {
-//            switch (key_read())
-//            {
-//            case ENTER:
-//                if (temp_item->JumpPage==NULL)
-//                {
-//                    MENU_STATE=APP_RUN;
+		  xQueueReceive(g_key_data_quene,&key_data,portMAX_DELAY);
+            switch(key_data.key_data)
+            {
+            case enter:
+                if (temp_item->JumpPage==NULL)
+                {
+                    MENU_STATE=APP_RUN;
 //                    ui_disapper(disapper);
-//                    App_Function=temp_item->Item_function;
-//                }
-//                else 
-//                {
-//                    MENU_STATE=MENU_RUN;
+                    App_Function=temp_item->Item_function;
+                }
+                else 
+                {
+                    MENU_STATE=MENU_RUN;
 //                    for (size_t i = 0; i < 8; i++)      
 //                    {
-//                        disapper=ui_disapper(disapper);
+////                        disapper=ui_disapper(disapper);
 //                    }
-//                    Draw_Menu(FirstPos,temp_item->JumpPage,Font_Size,temp_item,temp_item->JumpPage->itemHead);
-//                    temp_item=temp_item->JumpPage->itemHead;
-//                }
-//                break;
-//            case UP:
-//                Draw_Menu(FirstPos,temp_item->location,Font_Size,temp_item,temp_item->lastiTem);
-//                temp_item=temp_item->lastiTem;
-//                MENU_STATE=MENU_RUN;
-//                break;
-//            case DOWN:
-//                Draw_Menu(FirstPos,temp_item->location,Font_Size,temp_item,temp_item->nextiTem);
-//                temp_item=temp_item->nextiTem; 
-//                MENU_STATE=MENU_RUN;
-//                break;
-//            default:
-//                break;
-//            }
-//            Key_Open();
-//        }
+                    Draw_Menu(FirstPos,temp_item->JumpPage,Font_Size,temp_item,temp_item->JumpPage->itemHead);
+                    temp_item=temp_item->JumpPage->itemHead;
+                }
+                break;
+            case up_change:
+                Draw_Menu(FirstPos,temp_item->location,Font_Size,temp_item,temp_item->lastiTem);
+                temp_item=temp_item->lastiTem;
+                MENU_STATE=MENU_RUN;
+                break;
+            case down_change:
+                Draw_Menu(FirstPos,temp_item->location,Font_Size,temp_item,temp_item->nextiTem);
+                temp_item=temp_item->nextiTem; 
+                MENU_STATE=MENU_RUN;
+                break;
+            default:
+                break;
+            }
 		if (MENU_STATE==APP_RUN)
-		{(*App_Function)();MENU_STATE=MENU_RUN;Draw_Menu(FirstPos,temp_item->location,Font_Size,temp_item,temp_item);MENU_STATE=MENU_RUN;
-//		Key_Open();
+		{
+			(*App_Function)();
+			MENU_STATE=MENU_RUN;
+			Draw_Menu(FirstPos,temp_item->location,Font_Size,temp_item,temp_item);
+			MENU_STATE=MENU_RUN;
 		}
 	}
 }
@@ -509,7 +491,7 @@ TaskHandle_t Menu_Task_Handle;
 BaseType_t Menu_Task_Create(void)
 {
     BaseType_t xReturn=pdPASS;
-    xReturn=xTaskCreate((TaskFunction_t)Menu_Task,"Menu_Task",128,NULL,osPriorityNormal,&Menu_Task_Handle);
+    xReturn=xTaskCreate((TaskFunction_t)Menu_Task,"Menu_Task",256,NULL,osPriorityNormal,&Menu_Task_Handle);
     if (pdPASS==xReturn)
     {
         return pdPASS;

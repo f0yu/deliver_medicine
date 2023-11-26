@@ -25,7 +25,7 @@ typedef __packed struct
   uint8_t ch;       // 通道
   uint32_t len;     // 包长度
   uint8_t cmd;      // 命令
-//  uint8_t sum;      // 校验和
+  //uint8_t sum;      // 校验和
   
 }packet_head_t;
 
@@ -112,6 +112,9 @@ int8_t receiving_process(void);
   */
 void set_computer_value(uint8_t cmd, uint8_t ch, void *data, uint8_t num);
 
+
+
+void fire_pid_task(void *params);
 #ifdef _cplusplus
 }
 #endif   

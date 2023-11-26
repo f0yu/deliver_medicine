@@ -60,11 +60,12 @@
 #define configTICK_RATE_HZ                       ((TickType_t)1000)
 #define configMAX_PRIORITIES                     ( 56 )
 #define configMINIMAL_STACK_SIZE                 ((uint16_t)128)
-#define configTOTAL_HEAP_SIZE                    ((size_t)4608)
+#define configTOTAL_HEAP_SIZE                    ((size_t)6912)
 #define configMAX_TASK_NAME_LEN                  ( 16 )
 #define configUSE_16_BIT_TICKS                   0
 #define configUSE_MUTEXES                        1
 #define configQUEUE_REGISTRY_SIZE                8
+#define configUSE_QUEUE_SETS					1
 #define configUSE_RECURSIVE_MUTEXES              1
 #define configUSE_COUNTING_SEMAPHORES            1
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION  0
@@ -75,7 +76,7 @@
 
 /* Software timer definitions. */
 #define configUSE_TIMERS                         1
-#define configTIMER_TASK_PRIORITY                ( 56-1   )
+#define configTIMER_TASK_PRIORITY                ( 55 )
 #define configTIMER_QUEUE_LENGTH                 10
 #define configTIMER_TASK_STACK_DEPTH             256
 
@@ -132,7 +133,7 @@ header file. */
 
 
 #define configUSE_TRACE_FACILITY                 1
-//#define configUSE_STATS_FORMATTING_FUNCTIONS     1
+#define configUSE_STATS_FORMATTING_FUNCTIONS     1
 
 
 /* USER CODE END 1 */

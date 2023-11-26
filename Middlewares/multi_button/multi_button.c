@@ -4,7 +4,8 @@
  */
 
 #include "multi_button.h"
-
+#include "main.h"
+#include "queue.h"
 #define EVENT_CB(ev)   if(handle->cb[ev])handle->cb[ev]((Button*)handle)
 
 //button handle list head.
@@ -207,45 +208,42 @@ uint8_t read_btn1_gpio(void)
 }
 void btn0_callback(void *btn);
 void btn1_callback(void *btn);
-
+extern QueueHandle_t g_key_data_quene;
+Key_Data key_data;
 void key_task(void* parameter)
 {
 	//gpioinit  已经在main中完成
 	struct Button btn0;
 	struct Button btn1;
-	TickType_t xLastWakeTime;
+//	TickType_t xLastWakeTime;
 	//按键移植
 	button_init(&btn0, read_btn0_gpio, 	0);
 	button_init(&btn1, read_btn1_gpio, 	0);
 	button_attach(&btn0, SINGLE_CLICK,btn0_callback);
 	button_attach(&btn1, SINGLE_CLICK,btn1_callback);
+	button_attach(&btn0, DOUBLE_CLICK,btn0_callback);
 	button_start(&btn0);
 	button_start(&btn1);
-	printf("KEY1 PRESS_DOWN! \n");
+//	printf("KEY1 PRESS_DOWN! \n");
+	
 	while(1)
 	{
 		button_ticks();
 //		printf("KEY1 PRESS_DOWN! \n");
-		xLastWakeTime = xTaskGetTickCount();
-		vTaskDelayUntil(&xLastWakeTime, 5);
-//		vTaskDelay(5);
+//		xLastWakeTime = xTaskGetTickCount();
+//		vTaskDelayUntil(&xLastWakeTime, 5);
+		vTaskDelay(5);
 	}
 }
+
 void btn1_callback(void *btn)
 {
 	switch(get_button_event((struct Button*)btn))
 	{
-		case PRESS_DOWN :
-			printf("KEY1 PRESS_DOWN! \n");
-			break;
-		case PRESS_UP:
-			printf("KEY1 PRESS_UP! \n");
-			break;
-		case PRESS_REPEAT:
-			printf("KEY1 PRESS_REPEAT! \n");
-			break;
 		case SINGLE_CLICK:
-			printf("KEY1 SINGLE_CLICK! \n");
+			key_data.key_data = down_change;
+			xQueueOverwrite(g_key_data_quene,&key_data);
+//			printf("KEY0 SINGLE_CLICK! \n");
 			break;
 		default:
 			break;
@@ -255,32 +253,51 @@ void btn0_callback(void *btn)
 {
 	switch(get_button_event((struct Button*)btn))
 	{
-		case PRESS_DOWN :
-			printf("KEY1 PRESS_DOWN! \n");
-			break;
-		case PRESS_UP:
-			printf("KEY1 PRESS_UP! \n");
-			break;
-		case PRESS_REPEAT:
-			printf("KEY1 PRESS_REPEAT! \n");
-			break;
 		case SINGLE_CLICK:
-			printf("KEY1 SINGLE_CLICK! \n");
+			key_data.key_data = up_change;
+			xQueueOverwrite(g_key_data_quene,&key_data);
+//			printf("KEY1 SINGLE_CLICK! \n");
 			break;
 		case DOUBLE_CLICK:
-			printf("KEY1 DOUBLE_CLICK! \n");
-			break;
-		case LONG_PRESS_START:
-			printf("KEY1 LONG_PRESS_START! \n");
-			break;
-		case LONG_PRESS_HOLD:
-			printf("KEY1 LONG_PRESS_HOLD! \n");
+			key_data.key_data = enter;
+			xQueueOverwrite(g_key_data_quene,&key_data);
+//			printf("KEY1 DOUBLE_CLICK! \n");
 			break;
 		default:
 			break;
 		
 	}
 }
+//void btn0_callback(void *btn)
+//{
+//	switch(get_button_event((struct Button*)btn))
+//	{
+//		case PRESS_DOWN :
+//			printf("KEY1 PRESS_DOWN! \n");
+//			break;
+//		case PRESS_UP:
+//			printf("KEY1 PRESS_UP! \n");
+//			break;
+//		case PRESS_REPEAT:
+//			printf("KEY1 PRESS_REPEAT! \n");
+//			break;
+//		case SINGLE_CLICK:
+//			printf("KEY1 SINGLE_CLICK! \n");
+//			break;
+//		case DOUBLE_CLICK:
+//			printf("KEY1 DOUBLE_CLICK! \n");
+//			break;
+//		case LONG_PRESS_START:
+//			printf("KEY1 LONG_PRESS_START! \n");
+//			break;
+//		case LONG_PRESS_HOLD:
+//			printf("KEY1 LONG_PRESS_HOLD! \n");
+//			break;
+//		default:
+//			break;
+//		
+//	}
+//}
 
 
 

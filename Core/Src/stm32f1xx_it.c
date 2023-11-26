@@ -184,11 +184,19 @@ void DMA1_Channel6_IRQHandler(void)
 void DMA1_Channel7_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Channel7_IRQn 0 */
-
+//	if (__HAL_DMA_GET_FLAG(&hdma_usart2_tx, DMA_FLAG_TC4) != RESET) //数据发送完成中断
+//	{
+//		__HAL_UART_CLEAR_IDLEFLAG(&huart1); //清除串口空闲中断标志位，发送完成那么串口也是空闲态哦~
+//		USART2_TX_FLAG = 0; // 重置发送标志位
+//https://blog.csdn.net/jhyCSDN/article/details/126247055
+//		huart1.gState = HAL_UART_STATE_READY;
+//		hdma_usart2_tx.State = HAL_DMA_STATE_READY;
+//		__HAL_UNLOCK(&hdma_usart2_tx);
+//	}
   /* USER CODE END DMA1_Channel7_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_usart2_tx);
   /* USER CODE BEGIN DMA1_Channel7_IRQn 1 */
-
+  
   /* USER CODE END DMA1_Channel7_IRQn 1 */
 }
 

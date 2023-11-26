@@ -26,6 +26,7 @@
 
 
 uint8_t cbuffer_data[30];
+uint8_t c_main_buffer_data[30];
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart1;
@@ -359,7 +360,32 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
     {
 //		HAL_UART_Transmit_DMA(&huart2,cbuffer_data,Size);
 		
-		protocol_data_recv(cbuffer_data, Size);
+//		protocol_data_recv(cbuffer_data, Size);
+		//蓝牙数据接卸
+		
+		if(cbuffer_data[0]== 0xA5 && cbuffer_data[Size-1] == 0x5A)
+		{
+			uint8_t sum_data =0;
+			for(uint8_t i = 1;i<Size-2;i++)
+			{
+				sum_data +=cbuffer_data[i];
+			}
+//			printf("%d",sum_data);
+//			HAL_UART_Transmit_DMA(&huart2,cbuffer_data,Size);
+			if(sum_data == cbuffer_data[Size-2])
+			{
+//				memset(c_main_buffer_data,0,Size);
+//				
+				memcpy(c_main_buffer_data, cbuffer_data, Size);	//将接收缓冲区的数据复制到主缓冲区
+//				将数据放入队列中
+				
+//				memset(cbuffer_data,0,Size);
+//				HAL_Delay(1);
+				while ((USART2->SR & 0X40) == 0);
+				HAL_UART_Transmit_DMA(&huart2,cbuffer_data,Size);
+			}
+		}
+		
 		HAL_UARTEx_ReceiveToIdle_DMA(&huart2,cbuffer_data,30);
 		__HAL_DMA_DISABLE_IT(&hdma_usart2_rx,DMA_IT_HT);
 //		HAL_UART_Receive_IT(&huart2, cbuffer_data, 1);

@@ -46,7 +46,10 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-
+typedef struct __Speed_AIM_Data
+{
+    float left_speed_aim,right_speed_aim;
+}Speed_AIM_Data_Struct;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/

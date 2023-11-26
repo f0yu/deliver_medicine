@@ -5,6 +5,11 @@
 #include "stdlib.h"
 #include "stm32f1xx_hal.h"
 
+typedef struct __Angle_Data
+{
+    double car_angle;
+}Angle_Data_Struct;
+
 
 #define I2C_Group_SCL GPIOB // I2C的时钟GPIO组号
 #define I2C_SCL 		GPIO_PIN_3  // I2C时钟的GPIO端口号
@@ -21,7 +26,10 @@
 void Init_HMC5883(void );
 void Multiple_Read_HMC5883(unsigned char *BUF);
 double HMC5883_anglexy(unsigned char *BUF);
+double calculateAngleDifference(double current_angle, double target_angle);
+
 void read_hmc_task(void * parms);
+
 #endif  //__HMC5883_H
 
 

@@ -1944,6 +1944,10 @@ VL53L0X_API VL53L0X_Error VL53L0X_GetReferenceSpads(VL53L0X_DEV Dev,
 /** @} VL53L0X_cut11_group */
 
 	
+typedef struct __Distance_Data
+{
+    uint16_t left_speed_aim;
+}Distance_Data_Struct;
 
 void measure_distance(void *param);
 #ifdef __cplusplus

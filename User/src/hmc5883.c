@@ -1,5 +1,6 @@
 #include "hmc5883.h"
 #include <math.h>
+#include "queue.h"
 //软件iic
 
 /**
@@ -208,16 +209,50 @@ double HMC5883_anglexy(unsigned char *BUF)
 	x=BUF[0] << 8 | BUF[1]; //Combine MSB and LSB of X Data output register  最高有效位
 	
 	y=BUF[4] << 8 | BUF[5]; //Combine MSB and LSB of Y Data output register
-	angle_xy = atan2((double)y,(double)x)*(180/3.14159265)+180;
+	angle_xy = atan2((double)y,(double)x)*(180/3.14159265);
 	return angle_xy;
 }
+double calculateAngleDifference(double current_angle, double target_angle) {
+    // 将角度限制在-180到180度范围内
+    current_angle = fmod(current_angle + 180.0, 360.0) - 180.0;
+    target_angle = fmod(target_angle + 180.0, 360.0) - 180.0;
+
+    // 计算差值
+    double angle_difference = target_angle - current_angle;
+
+    // 处理角度差值的溢出情况
+    if (angle_difference <= -180.0) {
+        angle_difference += 360.0;
+    } else if (angle_difference > 180.0) {
+        angle_difference -= 360.0;
+    }
+    return angle_difference;
+}
+extern QueueHandle_t g_angle_data_quene;
 void read_hmc_task(void * parms)
 {
 	uint8_t BUF[6];
+	Angle_Data_Struct angle_data;
+	double init_angle;
 	Init_HMC5883();
+	Multiple_Read_HMC5883(BUF);
+	init_angle = HMC5883_anglexy(BUF);
 	while(1)
 	{
 		Multiple_Read_HMC5883(BUF);
+		angle_data.car_angle = HMC5883_anglexy(BUF)-init_angle;
+//		angle_data.car_angle = fmod(angle_data.car_angle+180.0,360.0)-180.0;
+		if(angle_data.car_angle>180)
+		{
+			angle_data.car_angle -= 180;
+		}else if(angle_data.car_angle<-180)
+		{
+			angle_data.car_angle += 180;
+		}
+		angle_data.car_angle =\
+		calculateAngleDifference(angle_data.car_angle,init_angle);
+		xQueueSend(g_angle_data_quene,&angle_data.car_angle,portMAX_DELAY);
+		//将数据传输出去
 //		printf("5883data:%f\r\n",HMC5883_anglexy(BUF));
 		vTaskDelay(20);
 	}

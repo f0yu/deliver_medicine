@@ -26,6 +26,7 @@ void pid_openmv_control(void);
 
 extern PID_Increment_Struct g_motor_right_pid;
 extern PID_Increment_Struct g_motor_left_pid;
+extern PID_Increment_Struct g_angle_pid ;
 #endif /*__BSP_PID_H__ */
 
 

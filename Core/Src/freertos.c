@@ -169,17 +169,17 @@ void MX_FREERTOS_Init(void) {
   /* add threads, ... */
  	xTaskCreate(lcd_test_task, "lcd_test", 256, NULL, osPriorityNormal, NULL);
 	xTaskCreate(key_task, "key_task", 128, NULL, osPriorityNormal, NULL);
-	xTaskCreate(read_hmc_task, "hmc_task", 128, NULL, osPriorityNormal,&g_read_hmc_task);
+	xTaskCreate(read_hmc_task, "hmc_task", 256, NULL, osPriorityNormal,&g_read_hmc_task);
 //	xTaskCreate(measure_distance, "dis_task", 128, NULL, osPriorityNormal, &g_measure_distance);
 	xTaskCreate(logic_control, "logic_control", 256, NULL, osPriorityNormal+1, NULL);
 
-	Menu_Init();
-	Menu_Task_Create();
-//	xTaskCreate(pid_control, "pid_control", 256, NULL, osPriorityNormal+2, NULL);
+//	Menu_Init();
+//	Menu_Task_Create();
+	xTaskCreate(pid_control, "pid_control", 256, NULL, osPriorityNormal+2, NULL);
 //	xTaskCreate(fire_pid_task, "fire_pid", 500, NULL, osPriorityNormal, NULL);
 
 
-//	xTimerStart(g_motor_timer,0);
+	xTimerStart(g_motor_timer,0);
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -290,7 +290,7 @@ void logic_control(void *param)
 	double aim_angle = 0;
 	Angle_Data_Struct angle_data;
 	static float speed_error = 0;
-	static float speed_rate = 0;
+	static int16_t speed_rate = 0;
 	void* usart_point;
 	Uart_Car_Data uart_data ;
 	while(1)
@@ -321,11 +321,19 @@ void logic_control(void *param)
 					/*进行角度环pid计算*/
 					g_angle_pid.actual_val = current_angle_error;
 					speed_error = PID_Increment(&g_angle_pid);
-					
+//					speed_error = current_angle_error*0.3;
+					if(speed_error>70)
+					{
+						speed_error = 70;
+					}else if(speed_error<-70)
+					{
+						speed_error = -70;
+					}
 				}
 				
 //				printf("5883data:%f,%f\r\n",speed_error,current_angle_error);
-			}else if(xQueueHandle == g_uart_data_quene)
+			}else
+			if(xQueueHandle == g_uart_data_quene)
 			{
 //				xQueueOverwriteFromISR(g_uart_data_quene, &c_main_buffer_data, &xHigherPriorityTaskWoken);
 
@@ -336,30 +344,20 @@ void logic_control(void *param)
 //					printf("%d\r\n",((uint8_t *)usart_point)[i]);
 //				}
 				uart_data.head_frame = ((uint8_t *)usart_point)[0];
-				uart_data.logic_data = ((uint8_t *)usart_point)[1]<<8 |((uint8_t *)usart_point)[2];
-				uart_data.x_data = ((uint8_t *)usart_point)[3]<<8 |((uint8_t *)usart_point)[4];
-				uart_data.y_data = ((uint8_t *)usart_point)[5]<<8 |((uint8_t *)usart_point)[6];
-				uart_data.speed_data = ((uint8_t *)usart_point)[7]<<8 |((uint8_t *)usart_point)[8];
-				uart_data.end_frame = ((uint8_t *)usart_point)[9];
-				printf("%x\r\n" ,uart_data.speed_data);
-//				printf("\r\n%p\r\n",usart_point);
-//				printf("%d,%d,%d,%d\r\n",(*(Uart_Car_Data *)usart_point).logic_data
-//				,(*(Uart_Car_Data *)usart_point).x_data
-//				,(*(Uart_Car_Data *)usart_point).y_data
-//				,(*(Uart_Car_Data *)usart_point).speed_data
-//				);
-//				uart_data.logic_data = usart_point[2]<<8|usart_point[1];
-//				uart_data.x_data = usart_point[4]<<8|usart_point[3];
-//				uart_data.y_data = usart_point[6]<<8|usart_point[5];
-//				uart_data.speed_data = usart_point[8]<<8|usart_point[7];
-//				printf("usart:%d,%d,%d,%d\r\n",uart_data.logic_data
-//				,uart_data.x_data
-//				,uart_data.y_data
-//				,uart_data.speed_data
-//				);
+				uart_data.logic_data = ((uint8_t *)usart_point)[2]<<8 |((uint8_t *)usart_point)[1];
+				uart_data.x_data = ((uint8_t *)usart_point)[4]<<8 |((uint8_t *)usart_point)[3];
+				uart_data.y_data = ((uint8_t *)usart_point)[6]<<8 |((uint8_t *)usart_point)[5];
+				uart_data.speed_data = ((uint8_t *)usart_point)[8]<<8 |((uint8_t *)usart_point)[7];
+				uart_data.sum_data = ((uint8_t *)usart_point)[8];
+				uart_data.end_frame = ((uint8_t *)usart_point)[10];
+				double angle_cal = 0;
+				angle_cal = atan2((double)uart_data.y_data,(double)uart_data.x_data)*(180/3.14159265);
+//				aim_angle = angle_cal;
+				speed_rate = uart_data.speed_data;
+				printf("%f\r\n",angle_cal);
 			}
 			
-		}
+		} 
 		
 		speed_aim_data.left_speed_aim = speed_rate+speed_error;
 		speed_aim_data.right_speed_aim = speed_rate-speed_error;
@@ -404,5 +402,27 @@ void lcd_test_task(void *params)
 	}
 	
 }
+//				if(speed_rate == 0)
+//				{
+//				//	speed_rate = uart_data.speed_data;
+//					speed_rate = 0; 
+//				}
+//				printf("%d\r\n" ,uart_data.speed_data);
+//				printf("\r\n%p\r\n",usart_point);
+//				printf("%d,%d,%d,%d,%d \r\n",uart_data.head_frame,
+//				uart_data.logic_data,
+//				uart_data.x_data,
+//				uart_data.y_data,
+//				uart_data.speed_data
+//				);
+//				uart_data.logic_data = usart_point[2]<<8|usart_point[1];
+//				uart_data.x_data = usart_point[4]<<8|usart_point[3];
+//				uart_data.y_data = usart_point[6]<<8|usart_point[5];
+//				uart_data.speed_data = usart_point[8]<<8|usart_point[7];
+//				printf("usart:%d,%d,%d,%d\r\n",uart_data.logic_data
+//				,uart_data.x_data
+//				,uart_data.y_data
+//				,uart_data.speed_data
+//				);
 /* USER CODE END Application */
 

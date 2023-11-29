@@ -28,6 +28,7 @@
 #include  <math.h>    //Keil library 
 #include "timers.h"
 #include "queue.h"
+#include "usart.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -68,6 +69,7 @@ QueueHandle_t g_speed_aim_quene;
 
 QueueHandle_t g_distance_data_quene;
 QueueHandle_t g_angle_data_quene;
+QueueHandle_t g_uart_data_quene;
 
 TaskHandle_t g_read_hmc_task;
 TaskHandle_t g_measure_distance;
@@ -150,12 +152,13 @@ void MX_FREERTOS_Init(void) {
 	g_speed_aim_quene = xQueueCreate(1,sizeof(Speed_AIM_Data_Struct));
 	g_distance_data_quene = xQueueCreate(1,sizeof(Distance_Data_Struct));
 	g_angle_data_quene = xQueueCreate(1,sizeof(Angle_Data_Struct));
+	g_uart_data_quene = xQueueCreate(1,sizeof(void*));
 	
 	
-	
-	g_xQueueSetInput = xQueueCreateSet(3);
+	g_xQueueSetInput = xQueueCreateSet(4);
 	xQueueAddToSet(g_distance_data_quene,g_xQueueSetInput);
 	xQueueAddToSet(g_angle_data_quene,g_xQueueSetInput);
+	xQueueAddToSet(g_uart_data_quene,g_xQueueSetInput);
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
@@ -168,15 +171,15 @@ void MX_FREERTOS_Init(void) {
 	xTaskCreate(key_task, "key_task", 128, NULL, osPriorityNormal, NULL);
 	xTaskCreate(read_hmc_task, "hmc_task", 128, NULL, osPriorityNormal,&g_read_hmc_task);
 //	xTaskCreate(measure_distance, "dis_task", 128, NULL, osPriorityNormal, &g_measure_distance);
-	xTaskCreate(logic_control, "logic_control", 128, NULL, osPriorityNormal+1, NULL);
+	xTaskCreate(logic_control, "logic_control", 256, NULL, osPriorityNormal+1, NULL);
 
 	Menu_Init();
 	Menu_Task_Create();
-	xTaskCreate(pid_control, "pid_control", 256, NULL, osPriorityNormal+2, NULL);
+//	xTaskCreate(pid_control, "pid_control", 256, NULL, osPriorityNormal+2, NULL);
 //	xTaskCreate(fire_pid_task, "fire_pid", 500, NULL, osPriorityNormal, NULL);
 
 
-	xTimerStart(g_motor_timer,0);
+//	xTimerStart(g_motor_timer,0);
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -286,7 +289,10 @@ void logic_control(void *param)
 	double current_angle_error = 0;
 	double aim_angle = 0;
 	Angle_Data_Struct angle_data;
-	float speed_error;
+	static float speed_error = 0;
+	static float speed_rate = 0;
+	void* usart_point;
+	Uart_Car_Data uart_data ;
 	while(1)
 	{
 		/*读取队列集中队列*/
@@ -317,12 +323,46 @@ void logic_control(void *param)
 					speed_error = PID_Increment(&g_angle_pid);
 					
 				}
-				speed_aim_data.left_speed_aim = 0+speed_error;
-				speed_aim_data.right_speed_aim = 0-speed_error;
-				printf("5883data:%f,%f\r\n",speed_error,current_angle_error);
+				
+//				printf("5883data:%f,%f\r\n",speed_error,current_angle_error);
+			}else if(xQueueHandle == g_uart_data_quene)
+			{
+//				xQueueOverwriteFromISR(g_uart_data_quene, &c_main_buffer_data, &xHigherPriorityTaskWoken);
+
+				xQueueReceive(g_uart_data_quene,&usart_point ,0);
+				
+//				for(uint8_t i = 0;i<10;i++)
+//				{
+//					printf("%d\r\n",((uint8_t *)usart_point)[i]);
+//				}
+				uart_data.head_frame = ((uint8_t *)usart_point)[0];
+				uart_data.logic_data = ((uint8_t *)usart_point)[1]<<8 |((uint8_t *)usart_point)[2];
+				uart_data.x_data = ((uint8_t *)usart_point)[3]<<8 |((uint8_t *)usart_point)[4];
+				uart_data.y_data = ((uint8_t *)usart_point)[5]<<8 |((uint8_t *)usart_point)[6];
+				uart_data.speed_data = ((uint8_t *)usart_point)[7]<<8 |((uint8_t *)usart_point)[8];
+				uart_data.end_frame = ((uint8_t *)usart_point)[9];
+				printf("%x\r\n" ,uart_data.speed_data);
+//				printf("\r\n%p\r\n",usart_point);
+//				printf("%d,%d,%d,%d\r\n",(*(Uart_Car_Data *)usart_point).logic_data
+//				,(*(Uart_Car_Data *)usart_point).x_data
+//				,(*(Uart_Car_Data *)usart_point).y_data
+//				,(*(Uart_Car_Data *)usart_point).speed_data
+//				);
+//				uart_data.logic_data = usart_point[2]<<8|usart_point[1];
+//				uart_data.x_data = usart_point[4]<<8|usart_point[3];
+//				uart_data.y_data = usart_point[6]<<8|usart_point[5];
+//				uart_data.speed_data = usart_point[8]<<8|usart_point[7];
+//				printf("usart:%d,%d,%d,%d\r\n",uart_data.logic_data
+//				,uart_data.x_data
+//				,uart_data.y_data
+//				,uart_data.speed_data
+//				);
 			}
 			
 		}
+		
+		speed_aim_data.left_speed_aim = speed_rate+speed_error;
+		speed_aim_data.right_speed_aim = speed_rate-speed_error;
 		xQueueOverwrite(g_speed_aim_quene,&speed_aim_data);
 	}
 }

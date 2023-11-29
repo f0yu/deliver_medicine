@@ -47,6 +47,20 @@ void MX_USART2_UART_Init(void);
 void MX_USART3_UART_Init(void);
 
 /* USER CODE BEGIN Prototypes */
+extern uint8_t c_main_buffer_data[30];
+
+
+typedef struct __UART_CONTROL_CAR_Data
+{
+    uint8_t head_frame;
+	int16_t logic_data;
+	int16_t x_data;
+	int16_t y_data;
+	int16_t speed_data;
+	uint8_t sum_data;
+	uint8_t end_frame;
+}Uart_Car_Data;
+
 
 /* USER CODE END Prototypes */
 

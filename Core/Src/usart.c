@@ -23,7 +23,7 @@
 /* USER CODE BEGIN 0 */
 #include "stdio.h"
 #include "protocol.h"
-
+#include "queue.h"
 
 uint8_t cbuffer_data[30];
 uint8_t c_main_buffer_data[30];
@@ -378,11 +378,17 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 //				
 				memcpy(c_main_buffer_data, cbuffer_data, Size);	//将接收缓冲区的数据复制到主缓冲区
 //				将数据放入队列中
-				
+				BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+				extern QueueHandle_t g_uart_data_quene;
+				 void *addressToSend;
+				addressToSend = c_main_buffer_data;
+//				xQueueOverwriteFromISR(g_uart_data_quene,&c_main_buffer_data,&xHigherPriorityTaskWoken);
+				xQueueOverwriteFromISR(g_uart_data_quene, &addressToSend, &xHigherPriorityTaskWoken);
 //				memset(cbuffer_data,0,Size);
 //				HAL_Delay(1);
-				while ((USART2->SR & 0X40) == 0);
-				HAL_UART_Transmit_DMA(&huart2,cbuffer_data,Size);
+//				while ((USART2->SR & 0X40) == 0);
+//				HAL_UART_Transmit_DMA(&huart2,c_main_buffer_data,Size);
+//				printf("%p  \r\n",c_main_buffer_data);
 			}
 		}
 		

@@ -204,12 +204,40 @@ void Init_HMC5883()
 double HMC5883_anglexy(unsigned char *BUF)
 {
 	int16_t x,y;
+//	static int16_t x_max = -999,x_min= 999,y_max= -999,y_min= 999;
 	double angle_xy;
 	Multiple_Read_HMC5883(BUF);
 	x=BUF[0] << 8 | BUF[1]; //Combine MSB and LSB of X Data output register  最高有效位
 	
 	y=BUF[4] << 8 | BUF[5]; //Combine MSB and LSB of Y Data output register
+	//磁场方向校准   需要采集xy两个轴的最大值和最小值
+//	if(x>x_max)
+//	{
+//		x_max = x;
+//	}
+//	if(x<x_min)
+//	{
+//		x_min = x;
+//	}
+//	if(y>y_max)
+//	{
+//		y_max = y;
+//	}
+//	if(y<y_min)
+//	{
+//		y_min = y;
+//	}
+	x = x - ((329-370)/2);
+	y = y - ((373-321)/2);
 	angle_xy = atan2((double)y,(double)x)*(180/3.14159265);
+//	if((x > 0)&&(y > 0)) angle_xy = atan2((double)y,(double)x)*(180/3.14159265);
+//	else if((x > 0)&&(y < 0)) angle_xy = 360+atan2((double)y,(double)x)*(180/3.14159265);
+//	else if((x == 0)&&(y > 0)) angle_xy = 90;
+//	else if((x == 0)&&(y < 0)) angle_xy = 270;
+//	else if(x < 0) angle_xy = atan2((double)y,(double)x)*(180/3.14159265)+180;
+
+//	printf("angle:%d,%d %f\r\n",x_max,x_min,angle_xy);
+//	printf("angle: %f\r\n",angle_xy);
 	return angle_xy;
 }
 double calculateAngleDifference(double current_angle, double target_angle) {
@@ -248,19 +276,5 @@ void read_hmc_task(void * parms)
 		}
 		xQueueSend(g_angle_data_quene,&angle_data.car_angle,portMAX_DELAY);
 		vTaskDelay(20);
-//		angle_data.car_angle = fmod(angle_data.car_angle+180.0,360.0)-180.0;
-//		if(angle_data.car_angle>180)
-//		{
-//			angle_data.car_angle -= 180;
-//		}else if(angle_data.car_angle<-180)
-//		{
-//			angle_data.car_angle += 180;
-//		}
-//		angle_data.car_angle =\
-//		calculateAngleDifference(angle_data.car_angle,init_angle);
-		
-		//将数据传输出去
-//		printf("5883data:%f\r\n",HMC5883_anglexy(BUF));
-		
 	}
 }

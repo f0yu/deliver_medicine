@@ -164,10 +164,10 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
-// 	xTaskCreate(lcd_test_task, "lcd_test", 256, NULL, osPriorityNormal, NULL);
+ 	xTaskCreate(lcd_test_task, "lcd_test", 256, NULL, osPriorityNormal, NULL);
 	xTaskCreate(key_task, "key_task", 128, NULL, osPriorityNormal, NULL);
 	xTaskCreate(read_hmc_task, "hmc_task", 128, NULL, osPriorityNormal,&g_read_hmc_task);
-	xTaskCreate(measure_distance, "dis_task", 128, NULL, osPriorityNormal, &g_measure_distance);
+//	xTaskCreate(measure_distance, "dis_task", 128, NULL, osPriorityNormal, &g_measure_distance);
 	xTaskCreate(logic_control, "logic_control", 128, NULL, osPriorityNormal+1, NULL);
 
 	Menu_Init();
@@ -282,7 +282,7 @@ void logic_control(void *param)
 {
 	Speed_AIM_Data_Struct speed_aim_data= {0,0};
 	QueueSetMemberHandle_t xQueueHandle;
-	double init_angle = 0;
+//	double init_angle = 0;
 	double current_angle_error = 0;
 	double aim_angle = 0;
 	Angle_Data_Struct angle_data;

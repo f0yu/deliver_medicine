@@ -256,6 +256,7 @@ double calculateAngleDifference(double current_angle, double target_angle) {
     }
     return angle_difference;
 }
+
 extern QueueHandle_t g_angle_data_quene;
 void read_hmc_task(void * parms)
 {
@@ -265,6 +266,7 @@ void read_hmc_task(void * parms)
 	Init_HMC5883();
 	Multiple_Read_HMC5883(BUF);
 	init_angle = HMC5883_anglexy(BUF);
+	
 	while(1)
 	{
 		Multiple_Read_HMC5883(BUF);
@@ -274,7 +276,7 @@ void read_hmc_task(void * parms)
 		}else if (angle_data.car_angle > 180.0) {
 			angle_data.car_angle -= 360.0;
 		}
-		xQueueSend(g_angle_data_quene,&angle_data.car_angle,portMAX_DELAY);
+		xQueueOverwrite(g_angle_data_quene,&angle_data);
 		vTaskDelay(20);
 	}
 }

@@ -167,8 +167,8 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
- 	xTaskCreate(lcd_test_task, "lcd_test", 256, NULL, osPriorityNormal, NULL);
-	xTaskCreate(key_task, "key_task", 128, NULL, osPriorityNormal, NULL);
+///// 	xTaskCreate(lcd_test_task, "lcd_test", 256, NULL, osPriorityNormal, NULL);
+//	xTaskCreate(key_task, "key_task", 128, NULL, osPriorityNormal, NULL);
 	xTaskCreate(read_hmc_task, "hmc_task", 256, NULL, osPriorityNormal,&g_read_hmc_task);
 //	xTaskCreate(measure_distance, "dis_task", 128, NULL, osPriorityNormal, &g_measure_distance);
 	xTaskCreate(logic_control, "logic_control", 256, NULL, osPriorityNormal+1, NULL);
@@ -302,7 +302,7 @@ void logic_control(void *param)
 			if(xQueueHandle == g_angle_data_quene)
 			{
 				/*接收角度数据并进行处理  结果传入到速度目标值中去*/
-				xQueueReceive(g_angle_data_quene,&angle_data.car_angle,0);
+				xQueueReceive(g_angle_data_quene,&angle_data,0);
 //				if(init_angle == 0)
 //				{
 //					init_angle = angle_data.car_angle;
@@ -331,7 +331,7 @@ void logic_control(void *param)
 					}
 				}
 				
-//				printf("5883data:%f,%f\r\n",speed_error,current_angle_error);
+				printf("5883data:%f,%f\r\n",speed_error,current_angle_error);
 			}else
 			if(xQueueHandle == g_uart_data_quene)
 			{
@@ -352,9 +352,9 @@ void logic_control(void *param)
 				uart_data.end_frame = ((uint8_t *)usart_point)[10];
 				double angle_cal = 0;
 				angle_cal = atan2((double)uart_data.y_data,(double)uart_data.x_data)*(180/3.14159265);
-//				aim_angle = angle_cal;
+				aim_angle = angle_cal;
 				speed_rate = uart_data.speed_data;
-				printf("%f\r\n",angle_cal);
+//				printf("%f\r\n",angle_cal);
 			}
 			
 		} 

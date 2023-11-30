@@ -384,7 +384,8 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 				addressToSend = c_main_buffer_data;
 //				xQueueOverwriteFromISR(g_uart_data_quene,&c_main_buffer_data,&xHigherPriorityTaskWoken);
 				xQueueOverwriteFromISR(g_uart_data_quene, &addressToSend, &xHigherPriorityTaskWoken);
-//				memset(cbuffer_data,0,Size);
+				portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+				//				memset(cbuffer_data,0,Size);
 //				HAL_Delay(1);
 //				while ((USART2->SR & 0X40) == 0);
 //				HAL_UART_Transmit_DMA(&huart2,c_main_buffer_data,Size);

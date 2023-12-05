@@ -15,7 +15,14 @@ void Encoder_Init(void)
 	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_2);   // ¿ªÆô±àÂëÆ÷B	
 	
 }
-
+float LowPassFilter(float x)
+{
+	static float y_prev = 0;
+//    float alpha = 10/(10 + 10);
+    float y = 0.5f*y_prev + (1.0f - 0.5f)*x;
+    y_prev = y;
+    return y;
+}
 
 float Get_Speed(TIM_HandleTypeDef *Encoder_TIM_Handle)
 {
@@ -25,6 +32,7 @@ float Get_Speed(TIM_HandleTypeDef *Encoder_TIM_Handle)
     __HAL_TIM_SetCounter(Encoder_TIM_Handle, 0);
 //	printf("car_speed: %d,\r\n",zj);
     Speed = (float)(zj * 100 * 60) / (4 * 448 * 30);
+//	Speed = LowPassFilter(Speed);
     return Speed;
 }
 

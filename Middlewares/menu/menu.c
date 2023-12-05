@@ -480,6 +480,7 @@ static void Menu_Task(void* parameter)
 void Menu_Init(void)
 {
   u8g2Init(&u8g2);
+//	HAL_Delay(100);
   Menu_Team();
 //  Draw_Process();
   Draw_Menu(FirstPos,&MainPage,Font_Size,&Mainitem1,&Mainitem1);

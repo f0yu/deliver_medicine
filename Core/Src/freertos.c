@@ -22,13 +22,14 @@
 #include "task.h"
 #include "main.h"
 #include "cmsis_os.h"
-#include "vl53l0x_api.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include  <math.h>    //Keil library 
 #include "timers.h"
 #include "queue.h"
 #include "usart.h"
+#include "vl53l0x_api.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -172,8 +173,11 @@ void MX_FREERTOS_Init(void) {
 	xTaskCreate(read_hmc_task, "hmc_task", 256, NULL, osPriorityNormal,&g_read_hmc_task);
 //	xTaskCreate(measure_distance, "dis_task", 128, NULL, osPriorityNormal, &g_measure_distance);
 	xTaskCreate(logic_control, "logic_control", 256, NULL, osPriorityNormal+1, NULL);
-
+	OLED_Init();
 	Menu_Init();
+//	HAL_Delay(100);
+	
+//	OLED_Clear();
 	Menu_Task_Create();
 	xTaskCreate(pid_control, "pid_control", 256, NULL, osPriorityNormal+2, NULL);
 //	xTaskCreate(fire_pid_task, "fire_pid", 500, NULL, osPriorityNormal, NULL);
